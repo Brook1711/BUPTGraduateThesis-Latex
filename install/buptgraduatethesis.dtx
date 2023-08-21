@@ -1,0 +1,4820 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2013 by Xianling Wang <rioxwang@foxmail.com>
+%
+% This file is a modified version of BUPTThesis project,
+% maintained by Yu Zhang <yu_zhang@ieee.org>.
+%
+% The changes to the original work include the application
+% of xeCJK as Chinese solution, and the format modification
+% according to the latest format requirement introduced by
+% the Graduate School of BUPT. 
+%
+% This file is part of the BUPTGraduateThesis project.
+% ---------------------------------------------------------
+%
+% This file may be distributed and/or modified under the 
+% conditions of the LaTeX Project Public License, either 
+% version 1.3 of this license or (at your option) any later 
+% version. The latest version of this license is in:
+%
+% http://www.latex-project.org/lppl.txt
+%
+% and version 1.3c or later is part of all distributions of 
+% LaTeX version 2005/12/01 or later.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{buptgraduatethesis.dtx}
+%</driver>
+%<cls>\NeedsTeXFormat{LaTeX2e}[2005/12/01] 
+%<cls>\ProvidesClass{buptgraduatethesis.cls}
+%<cfg>\ProvidesFile{buptgraduatethesis.cfg}
+%<cls|cfg>[2016/11/23 v7.0 BUPT graduate thesis LaTeX2e class]
+%<*driver>
+\documentclass[numbered,a4paper,full]{l3doc}
+\hypersetup{pdfstartview=FitH}
+\usepackage{xeCJK}
+\usepackage{xeCJKfntef}
+\usepackage{fancyvrb}
+\usepackage{geometry}
+\usepackage[toc]{multitoc}
+\fvset{formatcom=\xeCJKVerbAddon}
+\linespread{1.1}
+\setlist{noitemsep,topsep=1ex}
+\newlist{optiondesc}{description}{3}
+\setlist[optiondesc]{font=\mdseries\ttfamily,align=right,labelsep=.5em,leftmargin=4.5em}
+\def\PSKeyVal#1#2{\item[#1]\makebox[4em][l]{\meta{#2}}\ignorespaces}
+\setmainfont{Times New Roman}
+\setCJKmainfont[BoldFont=Adobe Heiti Std,ItalicFont=Adobe Kaiti Std]{Adobe Song Std}
+\setCJKmonofont{Adobe Kaiti Std}
+\xeCJKDeclareSubCJKBlock{HKMD}  { "FF65 }
+\xeCJKDeclareSubCJKBlock{Ext-B} { "20000 -> "2A6DF }
+\xeCJKDeclareSubCJKBlock{Hangul}{ "1100 -> "11FF, "3130 -> "318F, "A960 -> "A97F, "AC00 -> "D7AF }
+\setCJKmainfont[HKMD]{Microsoft YaHei}
+\setCJKmainfont[Ext-B]{SimSun-ExtB}
+\setCJKmainfont[Hangul]{Adobe Myungjo Std}
+\setCJKfamilyfont{song}{Adobe Song Std}
+\setCJKfamilyfont{hei}{Adobe Heiti Std}
+\setCJKfamilyfont{kai}{Adobe Kaiti Std}
+\setCJKfamilyfont{fs}{Adobe Fangsong Std}
+\newcommand{\song}{\CJKfamily{song}}
+\newcommand{\hei}{\CJKfamily{hei}}
+\newcommand{\kai}{\CJKfamily{kai}}
+\newcommand{\fs}{\CJKfamily{fs}}
+\xeCJKsetup{PunctStyle=kaiming,KaiMingPunct+={：；}}
+\def\MacroFont{\small\normalfont\ttfamily\xeCJKVerbAddon}
+\def\XeTeX{\hologo{XeTeX}}
+\def\XeLaTeX{\hologo{XeLaTeX}}
+\def\LaTeX{\hologo{LaTeX}}
+\def\LaTeXe{\hologo{LaTeX2e}}
+\parindent=2em
+\AtBeginDocument{\DeleteShortVerb{\"}\MakeShortVerb{\|}}
+\def\contentsname{目录}
+\DeclareUrlCommand\email{\def\UrlLeft##1\UrlRight{\href{mailto:##1}{##1}}}
+\ExplSyntaxOn
+\cs_new_nopar:Npn \package #1
+  {
+    \href
+      {
+        http://mirrors.ctan.org/help/Catalogue/entries/
+        \tl_expandable_lowercase:n {#1} .html
+      }
+      { \pkg {#1} }
+  }
+\NewDocumentCommand \PrintPunctList { O{7} m m }
+  {
+    \par
+    \begingroup
+    \CJKfontspec{Microsoft~YaHei}
+    \int_gzero:N \g_tmpa_int
+    \int_set:Nn \l_tmpa_int { \clist_count:c { c__xeCJK_#2_chars_clist } }
+    \noindent\hfill
+    \begin{tabular}{|*{#1}{>{\footnotesize\ttfamily U+}c|c|}}
+      \clist_map_inline:cn { c__xeCJK_#2_chars_clist }
+        {
+          \int_gincr:N \g_tmpa_int
+          \use_none:n ##1 & \tex_char:D ##1 \scan_stop:
+          \int_compare:nNnF \g_tmpa_int = \l_tmpa_int
+            {
+              \int_compare:nNnTF { \int_mod:nn \g_tmpa_int {#1} } = \c_zero
+                { \\ } { & }
+            }
+        }
+    \end{tabular}\hfill\null
+    \endgroup
+    \par
+  }
+\ExplSyntaxOff
+\geometry{includemp,hmargin={0mm,15mm},vmargin=15mm,footskip=7mm}
+\makeatletter
+\appto\GlossaryParms{%
+  \def\@idxitem{\par\hangindent 2em}%
+  \def\subitem{\@idxitem\hspace*{1em}}%
+  \def\subsubitem{\@idxitem\hspace*{2em}}}
+\patchcmd\changes@{\space}{\lbrack}{}{}
+\patchcmd\@wrglossary{hdpindex}{hdclindex{\the\c@HD@hypercount}}{}{}
+\let\orig@meta\meta
+\renewenvironment{description}{%
+  \list{}{%
+    \setlength\itemsep{-6pt}%
+    \setlength\labelwidth{3cm}%
+    \setlength\labelsep{3pt}%
+    \setlength\leftmargin{\labelwidth+\labelsep}%
+    \addtolength{\itemsep}{3pt}%
+    \renewcommand\makelabel[1]{%
+      \texttt{##1}
+    }
+  }%
+}{%
+  \endlist%
+}
+\def\meta#1{%
+  \orig@meta{\mbox{\slshape\xeCJKsetup{PunctStyle=plain,CJKecglue}#1}}}
+\def\TF{true\orvar{}false}
+\def\TTF{\defaultvar{true}\orvar{}false}
+\def\TFF{true\orvar\defaultvar{false}}
+\def\orvar{\textup{\textbar}}
+\def\defaultvar#1{\textup{#1}}
+\@addtoreset{CodelineNo}{section}
+\def\tokslink#1{\hyperlink{#1}{\ding{51}}}
+\makeatother
+\def\glossaryname{版本历史}
+\GlossaryPrologue{%
+  \addtocounter{secnumdepth}{-10}%
+  \section{\glossaryname}}
+\begin{document}
+  \DocInput{install/\jobname.dtx}
+  \newgeometry{margin=15mm,footskip=7mm}
+  \PrintChanges
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{0}
+%
+% \CharacterTable
+% {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%  Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%  Digits        \0\1\2\3\4\5\6\7\8\9
+%  Exclamation   \!     Double quote  \"     Hash (number) \#
+%  Dollar        \$     Percent       \%     Ampersand     \&
+%  Acute accent  \'     Left paren    \(     Right paren   \)
+%  Asterisk      \*     Plus          \+     Comma         \,
+%  Minus         \-     Point         \.     Solidus       \/
+%  Colon         \:     Semicolon     \;     Less than     \<
+%  Equals        \=     Greater than  \>     Question mark \?
+%  Commercial at \@     Left bracket  \[     Backslash     \\
+%  Right bracket \]     Circumflex    \^     Underscore    \_
+%  Grave accent  \`     Left brace    \{     Vertical bar  \|
+%  Right brace   \}     Tilde         \~}
+%
+%
+% \changes{v1.0}{2013/07/08}{初始版本}
+% \changes{v1.1}{2013/07/30}{更新 makethesis 的换行模式}
+% \changes{v1.2}{2013/11/14}{修正 makethesis.bat 的 BUG}
+% \changes{v1.3}{2013/11/15}{修正 makethesis.bat 的 BUG；将 Unicode 指令替换为 char 指令用于引入 Unicode 字符；使用 xeCJKsetcharclass 命令修正 xetex 引擎下的带圈数字脚注}
+% \changes{v2.0}{2013/11/20}{增加部分参考文献自定义配置的功能；更新帮助文档}
+% \changes{v2.1}{2013/11/21}{修改 article 类型参考文献显示样式}
+% \changes{v2.2}{2013/11/29}{修正缩略语在第一次引用时无法出现中文释义的 BUG}
+% \changes{v2.3}{2013/11/29}{修改 bibtex 生成的参考文献中 URL 的字体}
+% \changes{v3.0}{2013/12/23}{根据新版论文格式要求更新模板}
+% \changes{v4.0}{2013/12/26}{根据 xeCJK 宏包的更新修改宏包加载项；修复由于伪粗体带来的复制粘贴的 BUG}
+% \changes{v5.0}{2014/04/14}{增添数学字体选项，可以使用 Computer Modern 字体；盲审版本将隐去致谢和独创性等声明页；根据新版硕、博士论文格式要求更新模板和封面；修改参考文献中英文姓名出现 Jr 时的排版，并添加说明；修改帮助文档的字体，不用再依赖 TeX Gyre Pagella 字体；修正图名和表名的字体；改进一系列参考文献排版规则；增加免安装版，解压即可用；去除 makethesis 中安装时的输出重定向，方便排错}
+% \changes{v5.1}{2014/05/31}{修正 makethesis 中分章参考文献编译的 BUG，此 BUG 会影响 Linux 和 Unix 用户的分章参考文献输出}
+% \changes{v5.2}{2014/07/17}{根据新版论文格式对文档类进行精简；修正封面的 BUG；修正最新版 xeCJK 带来的问题；更新帮助文档}
+% \changes{v5.3}{2014/11/22}{修正 buptgraduatethesis.bst 中学位论文类参考文献格式的 BUG}
+% \changes{v5.4}{2014/11/29}{根据新版论文格式要求修正学位论文类参考文献的格式}
+% \changes{v6.0}{2015/01/02}{重新整理 buptgraduatethesis.bst；在 bare_thesis.bib 中给出各类参考文献模板；更新帮助文档；迁移到 GitCafe}
+% \changes{v6.1}{2015/01/16}{修正发表论文列表中序号不对齐的 BUG}
+% \changes{v6.2}{2015/04/23}{修正参考文献列表序号不对齐的 BUG}
+% \changes{v7.0}{2016/11/23}{修正涉密论文中的 BUG；修正参考文献格式控制的 BUG；增加博士后研究报告类型；根据新版 xeCJK 宏包更新命令；更新声明内容；根据新版 glossaries 宏包更新命令}
+% \changes{v7.1}{2018/03/16}{添加英文扉页、根据2017年标准修正格式}
+% \changes{v7.2}{2020/01/03}{更新 subfigure 宏包为较新的 subfig 宏包}
+%
+% \def\fileversion{v7.2}
+% \def\filedate{2020/01/03}
+%
+% \def\BUPTGraduateThesis{\textsc{BUPT}\-\textsc{Graduate}\-\textsc{Thesis}}
+% \def\BUPTThesis{\textsc{BUPT}\-\textsc{Thesis}}
+% \def\MathTime{\textit{MathT\i{}me}}
+%
+% \renewcommand{\tablename}{表}
+% 
+% \def\CTeX{C\TeX}
+% \def\TeXLive{\TeX{} Live}
+% 
+% \title{\bfseries%
+% \BUPTGraduateThesis \\ 北京邮电大学研究生学位论文 \LaTeXe 文档类%
+% \thanks{本文档适用于 \BUPTGraduateThesis{}~\fileversion, 发布日期: \filedate}}
+% \author{王贤凌 \\ \texttt{\url{rioxwang@foxmail.com}}}
+%
+% \date{\filedate}
+%
+% \maketitle
+% \tableofcontents
+% 
+% \begin{documentation}
+% 
+% \section{简介}
+% \BUPTGraduateThesis{} 提供北京邮电大学研究生学位论文及博士后研究工作报告的 \LaTeX{} 文档类，其符合北邮研究生院 2014 年 11 月发布的《关于研究生学位论文格式的统一要求》及相关博士后报告要求。
+% 
+% 尽管包括作者本人在内，已有数位北邮人使用 \BUPTGraduateThesis{} 完成其学位论文并成功提交，但目前不论是\BUPTThesis{} 还是 \BUPTGraduateThesis{} 均未经过官方认可。
+% {\bfseries 因使用本模板造成的一切后果由使用者自己承担。}
+% 
+% 2013 年 12 月 16 日发布的新版格式要求将研究生论文分为十一个部分：1.封面，2.内封（扉页），3.声明，4.摘要，5.目录，6.符号说明，7.论文正文，8.参考文献，9.附录，10.致谢，11.攻读学位期间发表的学术论文目录。
+% 目前 \BUPTGraduateThesis{} 除了封面依然在加强中，其余十个部分内容都可以生成符合格式要求的 PDF 文档，封面部分内容仍然需要用户自己利用 WORD 模板生成。
+% 
+% 该项目源于张煜博士（Dazzle Zhang）发起并维护的 \BUPTThesis{} 项目，并由王贤凌博士（rioxwang）在其基础上增添了更加稳健的中文处理方案，于 2013 年 7 月 5 日发布。
+% 该项目借助 \XeTeX{} 引擎，利用 xeCJK 宏包取代 \BUPTThesis{} 中的 CJK 宏包作为中文解决方案。
+% 同时，\BUPTGraduateThesis{} 根据研究生院发布的最新要求，对学位论文格式进行微调，并且提供更为详细的用户帮助文档 buptgraduatethesis.pdf。
+% 
+% \section{安装}
+% \subsection{基本要求}
+% \BUPTGraduateThesis{} 支持 Windows 与 Linux/OSX 操作系统下大多数主流 \LaTeXe{} 发行版本，不过我们推荐使用 \TeXLive{} 2014 或者 \CTeX{} 2.9.2.164，以及更高的版本 \footnote{尤其推荐使用 \TeXLive{}，因为 \CTeX{} 已经多年没有更新，宏包非常陈旧，而校园网下更新宏包又非常不稳定。}。
+% \BUPTGraduateThesis{} 使用 UTF-8 编码，因此还需要支持 UTF-8 编码的编辑器——Emacs 23 、VIM、Sublime Text 或 TeXworks 都是不错的选择。
+% 不过在 Windows 下，大多数用户仍然使用 WinEdt 作为 \LaTeX{} 的编辑器，而当前最新版的 WinEdt 对 UTF-8 的支持与识别仍然比较薄弱。
+% {\bfseries 因此如果真的打算使用 WinEdt，我们建议在所有 \TeX{} 源文件的开头都添加如下一行代码：}
+% \begin{Verbatim}[frame=single]
+% % !Mode:: "TeX:UTF-8"
+% \end{Verbatim}
+% 这样可以强制 WinEdt 使用 UTF-8 打开 \TeX{} 源文件。
+% 
+% \BUPTGraduateThesis{} 依赖的宏包及其版本要求列于表 \ref{tab:req-pkg}。
+% 如果编译 \BUPTGraduateThesis{} 所带的示例文件出错时，请核对这些宏包的版本是否满足要求。
+% 注：结尾带“*”的宏包表明该宏包在非 \XeTeX{} 引擎下使用。
+% \begin{table}
+%   \centering
+%   \caption{\BUPTGraduateThesis{}依赖的宏包}
+%   \label{tab:req-pkg}
+%   \begin{tabular}{ll|ll}
+%     \toprule
+%     宏包名 & 版本要求 & 宏包名 & 版本要求 \\
+%     \midrule
+%     |CJKnumb*|    & 2008/12/29 v4.8.2   & |graphicx|    & 2009/02/05 v1.0o \\
+%     |CJKpunct*|   & 2009/05/06 v4.8.2   & |helvet|      & 2005/04/12 v9.2a \\
+%     |CJKutf8*|    & 2009/05/06 v4.8.2   & |hyperref|    & 2011/10/01 v6.82 \\
+%     |amsmath|     & 2000/07/18 v2.13    & |indentfirst| & 1995/11/23 v1.03 \\
+%     |amssymb|     & 2009/06/22 v3.00    & |longtable|   & 2004/02/01 v4.11 \\
+%     |array|       & 2008/09/09 v2.4c    & |mathptmx|    & 2005/04/12 v9.2a \\
+%     |bm|          & 2004/02/26 v1.1c    & |multibib|    & 2008/12/10 v1.4 \\   
+%     |booktabs|    & 2005/04/14 v1.61803 & |natbib|      & 2010/09/13 v8.31b \\
+%     |breakurl|    & 2009/01/24 v1.30    & |ntheorem|    & 2011/02/16 v1.31 \\  
+%     |calc|        & 2007/08/22 v4.3     & |subdepth|    & 2007/09/02 v0.1 \\   
+%     |caption|     & 2011/09/30 v3.2c    & |subfig|      & 2005/06/28 v1.3 \\
+%     |chapterbib|  & 2010/09/18 v1.17    & |textcomp|    & 2005/09/27 v1.99g \\
+%     |courier|     & 2005/04/12 v9.2a    & |titlesec|    & 2011/08/28 v2.9.1 \\
+%     |everysel|    & 2011/10/28 v1.2     & |wallpaper|   & 2006/04/21 v1.10 \\
+%     |fontenc|     & 2005/09/27 v1.99g   & |xcolor|      & 2007/01/21 v2.11 \\
+%     |glossaries|  & 2010/02/06 v2.05    & |xkeyval|     & 2008/08/13 v2.6a \\
+%     |xeCJK|       & 2014/03/01 v3.2.10  & |url|         & 2006/04/12 v3.3 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+%
+% \subsection{下载与安装}
+% \label{sec:install}
+% \BUPTGraduateThesis{} 的最新版本可以从 \BUPTGraduateThesis{}的 GitCafe 项目主页 \footnote{\url{https://gitcafe.com/rioxwang/BUPTGraduateThesis}}获得。
+% 下载并解压获得主文件夹，内含：
+% \begin{Verbatim}[frame=single]
+% makethesis.bat                 install                logo
+% buptgraduatethesis.pdf         makethesis             README.md
+% release.zip
+% \end{Verbatim}
+% 其中，logo 文件夹下含有北京邮电大学相关的标志资源，install 文件夹下包含有安装 \BUPTGraduateThesis{} 所需的源文件，buptgraduatethesis.pdf 为本说明文档，makethesis.bat 与 makethesis 分别为 Windows 操作系统与 Linux/OSX 操作系统的安装文件，README.md 为简要说明文档，release.zip 为免安装版本的压缩包，解压后将所有文件拷贝到主目录下即可正常使用（注意备份已有工作！）。
+% Windows 用户的安装命令为：
+% \begin{Verbatim}[frame=single]
+% makethesis.bat install
+% \end{Verbatim}
+% Linux/OSX 用户的安装命令为：
+% \begin{Verbatim}[frame=single]
+% ./makethesis install
+% \end{Verbatim}
+% Linux/OSX 用户需要注意保证 makethesis 文件的可执行性，并且保证系统中已经安装了生成用户文档需要的 Adobe 系列字体。
+% 其中，Adobe 字体需要上网下载。字体文件名参见表 \ref{tab:font-name}。
+% \changes{v1.1}{2013/07/30}{增添安装所需字体文件名的说明}
+% \begin{table}[!h]
+%   \centering
+%   \caption{用户文档所需字体文件名}
+%   \label{tab:font-name}
+%   \begin{tabular}{ll}
+%     \toprule
+%     字体名 & 说明\\
+%     \midrule
+%       |AdobeSongStd-Light.otf| & Adobe 宋体\\
+%       |AdobeHeitiStd-Regular.otf| & Adobe 黑体\\
+%       |AdobeKaitiStd-Regular.otf| & Adobe 楷体\\
+%       |AdobeFangsongStd-Regular.otf| & Adobe 仿宋体\\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+% 
+% 安装成功之后，会在根目录生成 buptgraduatethesis.cls 、buptgraduatethesis.cfg、buptgraduatethesis.bst 以及 example 文件夹。
+% 
+% \section{用户手册}
+% example 文件夹为初次使用 \BUPTGraduateThesis{} 的用户提供了一份示例，{\bfseries 初次上手的用户可以将 example 文件夹中的所有文件拷贝到根目录下}，并在此示例的基础上测试编译，或者开始撰写论文。
+% 示例包含的文件列在表 \ref{tab:example-files} 中，在介绍完编译的方法后，我们将介绍如何逐个修改这些文件来撰写你自己的论文。
+
+% \begin{table}[!h]
+%   \centering
+%   \caption{示例包含的文件及说明}
+%   \label{tab:example-files}
+%   \begin{tabular}{ll}
+%     \toprule
+%     文件名 & 说明 \\
+%     \midrule
+%     |bare_thesis.tex|   & 主文件，用于定义论文的整体结构 \\
+%     |metadata.tex|      & 基本信息文件，用于定义论文的题目、作者、摘要、关键词等 \\
+%     |notations.tex|     & 符号对照表文件，用于列出文中用到的各种符号 \\
+%     |ch_intro.tex|      & 论文正文章节文件 \\
+%     |ch_concln.tex|     & 论文正文章节文件 \\
+%     |bare_thesis.bib|   & 参考文献 \BibTeX{} 文件 \\
+%     |acronyms.tex|      & 缩略语文件，用于定义文中用到的缩略语 \\
+%     |ackgmt.tex|        & 致谢文件 \\
+%     |app_lhospital.tex| & 附录文件 \\
+%     |pubs.tex|          & 发表论文列表，用于列出攻读学位期间发表的学术论文 \\
+%     |pubs.bib|          & 发表论文 \BibTeX{} 文件 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+% 
+% \subsection{编译方法}
+% \subsubsection{快速编译测试}
+% 我们为用户准备的 example 文件夹中的示例，可以快速帮助用户测试自己的安装是否成功。
+% 默认情况下，工作文件夹内的文件结构所应具备的文件组织结构如下（已经略去不必要的文件）：
+% \begin{Verbatim}[frame=single]
+% Workspace/---logo
+%           |--ackgmt.tex
+%           |--acronyms.tex
+%           |--app_lhospital.tex
+%           |--bare_thesis.bib
+%           |--bare_thesis.tex
+%           |--buptgraduatethesis.bst
+%           |--buptgraduatethesis.cls
+%           |--buptgraduatethesis.cfg
+%           |--ch_concln.tex
+%           |--ch_intro.tex
+%           |--makethesis.bat
+%           |--makethesis
+%           |--metadata.tex
+%           |--notations.tex
+%           |--pubs.bib
+%           |--pubs.tex
+% \end{Verbatim}
+% Windows 用户在 CMD 下输入
+% \begin{Verbatim}[frame=single]
+% makethesis.bat thesis
+% \end{Verbatim}
+% Linux/OSX 用户在 SHELL 下输入
+% \begin{Verbatim}[frame=single]
+% ./makethesis thesis
+% \end{Verbatim}
+% 进行编译测试，用户可以通过检查生成的 bare_thesis.pdf 是否正常来确定 \BUPTGraduateThesis{} 的安装与配置是否成功。
+% 
+% \subsubsection{编译说明}
+% \BUPTGraduateThesis{} 支持使用 |xelatex| 进行编译。
+% 此外，\BUPTGraduateThesis{} 源于 \BUPTThesis{}，因此严格意义上说，同样支持使用 |pdflatex| 与 |latex| 的编译方式。
+% 不过使用 |pdflatex| 与 |latex| 的编译方式需要用户自行生成字体文件，我们在后期的各种维护中也没有针对 |pdflatex| 与 |latex| 的编译方式进行测试，所以我们不建议用户使用 |pdflatex| 与 |latex| 的编译方式，而强烈建议使用 |xelatex| 的编译方式。
+% 
+% 此外，我们还不建议 Windows 用户使用 WinEdt 上的按钮进行编译，因为这种方式的编译不方便输入参数。
+% 我们建议 Windows 用户在 CMD 下（Linux/OSX 用户在 SHELL 下）使用预先编写好的批处理文件 makethesis 编译。
+% 高阶用户可以阅读批处理文件，深入了解 \BUPTGraduateThesis{} 编译的过程。
+% 此外，为了达到预期的编译效果，用户在编译前需要对 makethesis 进行简单的配置。
+% 配置的方法为：定位到 makethesis 的 User Configuration 模块，对其中的 5 个参数进行配置，各参数的功能参见表 \ref{tab:makethesis}。
+% \begin{table}[!h]
+%   \label{tab:makethesis}
+%   \centering
+%   \begin{tabular}{ll}
+%     \toprule
+%     命令 & 作用  \\
+%     \midrule
+%     |PROJECT|    & 安装 \BUPTGraduateThesis{} 时的重要参数，{\bfseries 请勿修改} \\
+%     |TARGET|     & 目标文件，生成论文的文件名，同时也是最外层 \TeX{} 文件的文件名 \\
+%     |MAINMATTER| & 各章节 \TeX{} 文件的文件名，以空格分开，不包括附录 \\
+%     |DRIVER|     & 编译方式，当前的批处理文件只支持 \XeTeX{} 编译 \\
+%     |BIBTYPE|    & 参考文献方式，|chapbib| 为分章参考文献，|allbib| 为全文参考文献 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+% 
+% \subsection{定义论文总体框架}
+% 首先我们从主文件 bare_thesis.tex 开始修改。
+% 和任何 \LaTeX{} 文件一样，bare_thesis.tex 首先声明所使用的文档类：
+% \begin{Verbatim}[frame=single]
+% \documentclass[%
+%   degree=master,%
+%   classlevel=classified,%
+%   mathfont=mathptmx,%
+%   dedication=false,%
+%   committee=true,%
+%   chapbib=true,%
+%   finish=print,%
+%   driver=xetex]{buptgraduatethesis}
+% \end{Verbatim}
+%
+% 在 |\documentclass| 的选项列表中列出了 \BUPTGraduateThesis{} 支持的所有类选项。
+% 下面列出了各个类选项的作用和所支持的键值说明。
+% 我们{\bfseries 采用直立字体来表示 \BUPTGraduateThesis{} 的默认设置。}
+% 
+% \subsubsection{类选项}
+% \changes{v7.0}{2016/11/23}{增加博士后研究报告类型}
+% \begin{function}{学位类别}
+%   \begin{syntax}
+%     degree=\meta{doctor\orvar{}\defaultvar{master}\orvar{}pmaster\orvar{}pdoctor}
+%   \end{syntax}
+% \end{function}
+% |degree| 用于指定论文申请的学位类别：
+% \begin{description}
+% \item[doctor] 博士学位
+% \item[master] 学术型硕士学位
+% \item[pmaster] 专业硕士学位
+% \item[pdoctor] 博士后研究报告
+% \end{description}
+% 
+% \begin{function}{保密类型}
+%   \begin{syntax}
+%     classlevel=\meta{\defaultvar{open}\orvar{}control\orvar{}confidential\orvar{}classified\orvar{}topsecret\orvar{}customized}
+%   \end{syntax}
+% \end{function}
+% |classlevel|用于指定保密类型，包括国家标准规定的五种文献保密级别：
+% \begin{description}
+% \item[open] 公开级\quad 可在国内外发行和交换；
+% \item[control] 限制级\quad 不涉及国家秘密，但在一定时间内限制其交流和使用范围；
+% \item[confidential] 秘密级\quad 涉及一般国家秘密； 
+% \item[classified] 机密级\quad 涉及重要的国家秘密；
+% \item[topsecret] 绝密级\quad 涉及最重要的国家秘密。
+% \end{description}
+% 论文的保密类型除了上述五种国标密级外，还可以设定为：
+% \begin{description}
+% \item[customized] 自定义密级\quad 用于设定非国标保级级别的其他保密类型。
+% \end{description}
+% 在使用自定义密级时，需要用 |\customclasslevel| 设定密级。
+%
+% \begin{function}{数学字体}
+%   \begin{syntax}
+%     mathfont=\meta{\defaultvar{mathptmx}\orvar{}mtplus\orvar{}mtpro\orvar{}cm}
+%   \end{syntax}
+% \end{function}
+% |mathfont|用于指定数学字体，前三种字体为 Times 字体：
+% \begin{description}
+% \item[mathptmx] PSNFF 字体集中包含的免费 Times 数学字体
+% \item[mtplus] \MathTime{} Plus 商业字体；
+% \item[mtpro] \MathTime{} Professional 商业字体；
+% \item[cm] \LaTeX{} 默认自带的 Computer Modern 字体；
+% \end{description}
+% \changes{v5.0}{2014/04/14}{增加使用 mathptmx 字体时提示找不到 rsfs10 的解决方案}
+% 注意：使用默认的 mathptmx 字体时，可能会提示找不到 rsfs10 的错误，此时需要运行 mf rsfs10 命令，并且清除辅助文件之后再次编译，即可解决此问题。
+% 
+% \begin{function}{答辩委员会名单页}
+%   \begin{syntax}
+%     committee=\meta{\TFF}
+%   \end{syntax}
+% \end{function}
+% |committee|用于指定是否在扉页后添加答辩委员会名单页，如果有，则答辩委员会名单页的内容在 committee.tex 中描述。
+% \begin{description}
+% \item[true] 有答辩委员会名单页；
+% \item[false] 无答辩委员会名单页。
+% \end{description}
+% 
+% \begin{function}{献词页}
+%   \begin{syntax}
+%     dedication=\meta{\TFF}
+%   \end{syntax}
+% \end{function}
+% |dedication|用于指定是否在论文目录之前插入献辞页，如果有献词页，则献词页的内容在 dedication.tex 中描述。
+% \begin{description}
+% \item[true] 有献辞页；
+% \item[false] 无献辞页。
+% \end{description}
+% 
+% \begin{function}{参考文献位置}
+%   \begin{syntax}
+%     chapbib=\meta{\TTF}
+%   \end{syntax}
+% \end{function}
+% |chapbib| 用于指定 \BUPTGraduateThesis{} 支持的两种参考文献位置：
+% \begin{description}
+% \item[true] 在论文每章之后列出该章所引用的参考文献；
+% \item[false] 在论文正文最后一章结束后列出全文所有的参考文献。
+% \end{description}
+% 需要注意的是，{\bfseries 通过 makethesis 编译生成论文时，需要在 makethesis 中进行相应设置}。
+% 
+% \changes{v6.0}{2015/01/02}{补充盲审功能使用说明}
+% \begin{function}{盲审功能}
+%   \begin{syntax}
+%     finish=\meta{online\orvar{}\defaultvar{print}\orvar{}peerreview}
+%   \end{syntax}
+% \end{function}
+% \BUPTGraduateThesis{} 支持三种输出类型：
+% \begin{description}
+% \item[online] 电子版\quad 用于个人或者实验室电子存档；
+% \item[print] 打印版\quad 用于论文最终版本打印输出和图书馆在线系统提交；
+% \item[peerreview] 盲审版\quad 用于产生隐去相关信息的送审论文。
+% \end{description}
+% 盲审功能的实现需要同时修改 pubs.bib 中 BSTpeerreview 条目的 |CTLswitch_peerreview| 域为 |"yes"| ，并且为 |CTLname_author_eng| 域和 |CTLname_author_chs| 域添加学位论文作者的姓名\footnote{学位论文作者姓名的编排需要与发表文章中 author 域中对应的姓名编排完全一致，建议采用大括号包围姓名，防止编译过程中对姓名格式的编辑。 }。
+% 如果输出盲审版，则自动隐去论文封面的作者和导师信息，以及致谢、独创性声明和使用授权说明，并将发表论文列表中的作者姓名自动替换为作者序次。
+%
+% \begin{function}{编译方式}
+%   \begin{syntax}
+%     driver=\meta{\defaultvar{xetex}\orvar{}dvips\orvar{}dvipdf\orvar{}pdftex}
+%   \end{syntax}
+% \end{function}
+% |driver|用于设定后台驱动与编译方式：
+% \begin{description}
+% \item[xetex] |xelatex| 直接输出；
+% \item[dvips] |latex| $\to$ |dvips| $\to$ |pspdf| 流程；
+% \item[dvipdf] |latex| $\to$ |dvipdfm| 流程；
+% \item[pdftex] |pdflatex| 直接输出。
+% \end{description}
+% {\bfseries \BUPTGraduateThesis 强烈建议使用 \XeTeX{} 引擎生成论文，以获得良好的稳定性，并保证简单灵活的配置。}
+% 
+% \subsection{导言区}
+% 在完成对文档类选项的修改之后，需要对导言区进行一些修改。
+% 在这里通常需要
+% \begin{itemize}
+% \item 通过 |\usepackage| 加载后面需要用到的宏包；
+% \item 定义自己的一些宏、命令或者环境；
+% \item 通过 |\graphicpath| 声明图片搜索路径等。
+% \end{itemize}
+% 上面这些修改并非必须，可以根据个人需要进行。
+% 除此之外，在导言区还必须完成三件工作。
+% 首先，通过加载 metadata.tex 来声明的论文基本信息：
+% \begin{Verbatim}[frame=single]
+% \input{metadata}  
+% \end{Verbatim}
+% 其次，通过加载 acronyms.tex 中的缩略语定义：
+% \begin{Verbatim}[frame=single]
+% \loadglsentries{acronyms}
+% \end{Verbatim}
+% 最后，用 |\newcite| 声明在发表论文列表中使用的相关命令：
+% \begin{Verbatim}[frame=single]
+% \newcite{jrnl}{期刊论文}
+% \newcite{conf}{会议论文}
+% \newcite{patent}{专利}
+% \end{Verbatim}
+% 
+% \subsubsection{设置论文基本信息}
+% 论文的基本信息在 metadata.tex 中通过 \BUPTGraduateThesis{} 定义的一系列命令进行设置。
+% 设置基本信息的命令的使用方法都是：|\command|\marg{基本信息}。
+% 具体命令及其对应的基本信息如下，其中以 |c| 开头的命令对应中文信息；
+% 以 |e| 开头的命令对应英文信息。
+% 
+% \begin{function}{论文标题}
+%   \begin{syntax}
+%     |\ctitle|\marg{中文题目} |\etitle|\marg{英文题目} |\titlebreak{}|
+%   \end{syntax}
+% \end{function}
+% 论文题目如果较长，则将自动在在封面上分成两行进行排版。
+% 你可以使用 |\titlebreak| 命令手动控制论文题目换行的位置，{\bfseries 目前暂不支持三行的论文题目}。
+% 
+% \begin{function}{作者姓名}
+%   \begin{syntax}
+%     |\cauthor|\marg{作者姓名} |\eauthor|\marg{Author Name}
+%   \end{syntax}
+% \end{function}
+% 
+% \begin{function}{作者学号}
+%   \begin{syntax}
+%     |\studentid|\marg{学号}
+%   \end{syntax}
+% \end{function}
+% 
+% \begin{function}{申请学位}
+%   \begin{syntax}
+%     |\cdegree|\marg{申请学位}
+%   \end{syntax}
+% \end{function}
+% 
+% \begin{function}{院系名称}
+%   \begin{syntax}
+%     |\cdepartment|\marg{院系名称} |\edepartment|\marg{院系英文名称}
+%   \end{syntax}
+% \end{function}
+% 
+% \begin{function}{专业名称}
+%   \begin{syntax}
+%     |\cmajor|\marg{专业名称}  |\emajor|\marg{专业英文名称}
+%   \end{syntax}
+% \end{function}
+%
+% \begin{function}{培养方式}
+%   \begin{syntax}
+%     |\ctrainingmode|\marg{培养方式} |\etrainingmode|\marg{Training Mode}
+%   \end{syntax}
+% \end{function} 
+%
+% \begin{function}{导师名称}
+%   \begin{syntax}
+%     |\csupervisor|\marg{导师名称} |\esupervisor|\marg{Supervisor Name}
+%   \end{syntax}
+% \end{function}
+% 
+% 
+% \begin{function}{论文摘要}
+%   \begin{syntax}
+%     |\cabstract|\marg{中文摘要} |\eabstract|\marg{英文摘要}
+%   \end{syntax}
+% \end{function}
+% 
+% \begin{function}{论文关键词}
+%   \begin{syntax}
+%     |\ckeywords|\marg{中文关键词} |\ekeywords|\marg{英文关键词} |\kwsep|
+%   \end{syntax}
+% \end{function}
+% 关键词之间使用 |\kwsep| 分隔，根据格式要求，使用空格隔开。
+% 
+% \begin{function}{自定义密级}
+%   \begin{syntax}
+%     |\customclasslevel|\marg{自定义密级}
+%   \end{syntax}
+% \end{function}
+% 如果文档类选项的保密类别设置为自定义，那么密级名称由|\customclasslevel|定义。
+%
+% 以下为博士后研究报告类型才需要设置的论文信息
+% \begin{function}{分类号}
+%   \begin{syntax}
+%     |\classnumber|\marg{博士后报告分类号}
+%   \end{syntax}
+% \end{function}
+%
+% \begin{function}{UDC}
+%   \begin{syntax}
+%     |\udc|\marg{博士后报告UDC}
+%   \end{syntax}
+% \end{function}
+%
+% \begin{function}{学校编号}
+%   \begin{syntax}
+%     |\schoolserial|\marg{博士后报告学校编号}
+%   \end{syntax}
+% \end{function}
+%
+% \begin{function}{研究起始时间}
+%   \begin{syntax}
+%     |\startdate|\marg{博士后报告研究起始时间}
+%   \end{syntax}
+% \end{function}
+%
+% \begin{function}{研究期满时间}
+%   \begin{syntax}
+%     |\finishdate|\marg{博士后报告研究期满时间}
+%   \end{syntax}
+% \end{function}
+%
+% \subsubsection{声明缩略语}
+% 论文用到的所有缩略语在 acronyms.tex 中声明：
+% \begin{function}{声明缩略语}
+%   \begin{syntax}
+%     |\newacronym|\marg{entry}\marg{缩写}\marg{英文全称}\marg{中文全称}
+%   \end{syntax}
+% \end{function}
+% 论文可以使用多个文件声明缩略语。
+% 所有用到的缩略语声明文件需要在导言区用 |\loadglsentries| 命令分别加载。
+% 
+% \subsubsection{声明发表论文引用命令} 
+% 为了利用 \BibTeX{} 实现发表论文列表的自动化处理，需要声明一些专门用于发表论文列表的引用命令。
+% \begin{function}{声明发表论文}
+%   \begin{syntax}
+%     |\newcite|\marg{后缀}\marg{类别}
+%   \end{syntax}
+% \end{function}
+% \begin{Verbatim}[frame=single]
+% \newcite{jrnl}{期刊论文}
+% \newcite{conf}{会议论文}
+% \newcite{patent}{专利}
+% \end{Verbatim}
+% 上面三条命令声明三种新的引用类型，分别为作者发表的期刊论文、会议论文和专利。
+% 对于期刊论文，包括下列三个命令：
+% \begin{center}
+%   \begin{tabular}{ll}
+%     |\bibliographystylejrnl| & 用于指定该类型文献的 \BibTeX{} 样式；\\
+%     |\bibliographyjrnl| & 用于指定该类型文献的 \BibTeX{} 数据库； \\
+%     |\nocitejrnl| & 用于引用该类型的文献。
+%   \end{tabular}
+% \end{center}
+% 对于会议论文和专利，同样存在以|conf|和|patent|为后缀的上述三个命令。
+% 在发表论文列表中将用这些带后缀的命令来区分作者所发表的不同类型的论文。
+% 需要注意的是，用户不需要在pubs.tex中指定|\bibliographystyle<suffix>|，该命令已经在文档类中加入。
+% 
+% \subsection{文档区综述}
+% bare_thesis.tex 的导言区之后就是由 |document| 环境声明的文档区。
+% 整个论文分为前置部分、主体部分和后置部分。
+%
+% \subsubsection{论文前置部分}
+% 论文前置部分包括封面、授权与声明、中英文摘要、目录和符号对照表。
+% \begin{Verbatim}[frame=single]
+% \makefrontmatter
+% \input{notations}
+% \end{Verbatim}
+% 除符号对照表之外的论文前置部分由 |\makefrontmatter| 产生。
+% 符号对照表通过加载 notations.tex 生成。
+%
+% \subsubsection{论文主体部分}
+% 论文主体部分包括正文各章节、附录（含缩略语表）和致谢。
+% 论文的主体部分从 |\mainmatter| 命令开始。
+% \begin{Verbatim}[frame=single]
+% \mainmatter
+% \end{Verbatim}
+% 论文正文章节用 |\include| 命令依次加载。
+% \begin{Verbatim}[frame=single]
+% \include{ch_intro}
+% \include{ch_concln}
+% \end{Verbatim}
+% 注意到在每个章节文件 ch_intro.tex 和 ch_concln.tex 的末尾分别都有如下代码：
+% \begin{Verbatim}[frame=single]
+% \ifx\usechapbib\empty
+% \nocite{BSTcontrol}
+% \setcounter{NAT@ctr}{0}
+% \bibliographystyle{buptgraduatethesis}
+% \bibliography{bare_thesis}
+% \fi
+% \end{Verbatim}
+% 第一行的代码是为了直接通过修改文档类选项实现参考文献位置的控制。
+% 如果文档类选项选择分章参考文献模式，在每一章对应的 \TeX{} 文件末尾需要指明该章使用的 \BibTeX{} 样式文件和 \BibTeX{} 数据库文件。
+% 注意，ch_intro.tex 和 ch_concln.tex 均使用使用 buptgraduatethesis.bst 作为 \BibTeX{} 样式文件；
+% 使用 bare_thesis.bib 作为 \BibTeX{} 数据库文件，方便统一管理参考文献；
+% 第二行可以通过 |\nocite| 命令引入 bare_thesis.bib 文件 |BTScontrol| 条目中对参考文献样式的自定义配置 \footnote{当前仅实现利用 |BTScontrol| 条目的 |CTLmaxnum_authors| 域控制最多显示的作者数量，超出部分以“等”或者“et al”替代，默认值为3。}。
+% 第三行手动重置参考文献序号计数器，原先通过 multibib 宏包的 resetlabels 选项实现，由于和其他宏包产生冲突，因此改为手动重置。
+% 
+% 论文的附录部分使用 |appendix| 或者 |appendix*| 环境产生。
+% 如果论文只有一个附录，则使用 |appendix*| 环境；
+% 如果论文有两个或以上的附录，则使用 |appendix| 环境。
+% 需要注意的是，缩略语表已经占据了论文中的一个附录，其作为附录的一部分使用 |\tableofacronyms| 命令产生。
+% 例如，全文只有缩略语表一个附录：
+% \begin{Verbatim}[frame=single]
+% \begin{appendix*}
+%   \tableofacronyms
+% \end{appendix*}  
+% \end{Verbatim}
+% 如果除缩略语表外还有其他附录，可以写成：
+% \begin{Verbatim}[frame=single]
+% \begin{appendix}
+%   \include{app_lhospital}
+%   \tableofacronyms
+% \end{appendix}  
+% \end{Verbatim}
+% 其中其他附录的内容写在 app_lhospital.tex 中，由|\include|命令引入。
+% 更多的附录就需要另外再加上其他的 \TeX{} 文件。
+% 
+% 如果文档类选项选择全文一个参考文献，那么需要在附录之后声明所用的 \BibTeX{} 样式文件和数据库文件，如下面的代码描述：
+% \begin{Verbatim}[frame=single]
+% \ifx\usechapbib\undefined
+% \bibliographystyle{buptgraduatethesis}
+% \bibliography{bare_thesis}
+% \fi
+% \end{Verbatim}
+% 当文档类选项中设置每章单独一个参考文献时，\LaTeXe{} 会忽略掉这里的 \BibTeX{} 声明,这样可以直接通过修改文档类选项实现参考文献位置的控制。
+%
+% \subsubsection{论文后置部分}
+% 论文的后置部分包括致谢和作者攻读学位期间发表的学术论文列表。
+% 论文后置部分从 |\backmatter| 开始。
+% 首先从 ackgmt.tex 加载致谢；
+% 再从 pubs.tex 中加载发表论文列表；
+% 最后以 |\newpage| 结束。
+% \begin{Verbatim}[frame=single]
+% \backmatter  
+% \input{ackgmt}
+% \input{pubs}
+% \newpage
+% \end{Verbatim}
+%
+% \subsection{正文章节}
+% \subsubsection{文件命名}
+% 论文正文每一章对应一个 \TeX{} 文件。
+% 正文各章对应的文件名以 ch_ 开头，例如：ch_intro.tex；
+% 论文的每一个附录对应一个 \TeX{} 文件，除缩略语表外，每个附录对应的文件名以 app_ 开头，例如：app_lhospital.tex。
+% 这样的命名方式有助于区分论文正文章节对应的 \TeX{} 文件和其他辅助 \TeX{}文件。
+%
+% \subsubsection{字体、字号与标点符号}
+% \begin{function}{中文字体}
+%   \begin{syntax}
+%     |\song| |\hei| |\kai| |\fs|
+%   \end{syntax}
+% \end{function}
+% 
+% 当使用 \XeTeX{} 引擎时，\BUPTGraduateThesis{} 使用字体配置文件 xeCJK-fonts.def 来配置中文字体，其中默认定义了四种常用中文字体，为 Windows 下默认使用的中易系列字体。\footnote{\bfseries 注意：新版格式要求中明确要求在封面使用粗宋体和粗黑体这两种伪粗体，而 xeCJK 在中易系列字体的伪粗体和正常体混排时，存在复制粘贴乱码的 BUG，会影响论文的查重。此问题已经在 CTEX 论坛上提交，尚未获得回复。目前 BUPTGraduateThesis 在 v4.0 及以上版本采用权宜之计，将封面需要加粗的字体修改为 Adobe 系列字体（字体无法统一，实在是权宜之计），避免伪粗中易宋体/黑体和正常中易宋体/黑体同时出现，暂时解决了这个 BUG。}
+% 四种字体选择命令如下：
+% \begin{description}
+% \item[\cs{song}] {\song 宋体 \quad 默认字体，用于除标题、引文、图注和表注之外的所有其他文字；}
+% \item[\cs{hei}] {\hei 黑体 \quad 用于标题、表头和需要突出强调的文字等；}
+% \item[\cs{kai}] {\kai 楷体 \quad 用于图（表）标题、图（表）中的文字标注；}
+% \item[\cs{fs}] {\fs 仿宋 \quad 用于引用其他文献的段落。}
+% \end{description}
+% Windows 下默认自带这四种字体（Windows XP下的仿宋略有不同，需要修改字体名称）；但是在 Linux/OSX 下，用户则需要自行获得这四种字体。
+% 用户也可以不使用收费的 Windows 自带字体，而使用免费的 Adobe 系列的宋体、黑体、楷体与仿宋体，甚至是方正系列中文字体，这些字体在 Linux/OSX 下需要自行上网下载安装。
+% 请注意：{\bfseries 任意修改字体很可能导致学位论文不被接受，即便 Adobe 系列字体也将承担此风险。}
+% 
+% 我们参考 xeCJK 宏包说明文档\footnote{xeCJK 宏包说明文档在各大 \LaTeX{} 发行版本中均有预装，请在 CMD 或 SHELL 下输入 |texdoc xeCJK| 打开说明文档。}对 \XeTeX{} 字体名的获得（非字体文件的名字）略作说明。
+% \changes{v2.0}{2013/11/20}{更正字体信息获取命令}
+% 首先在 CMD 或 SHELL 下输入如下命令获得系统中安装的字体信息：
+% \begin{Verbatim}[frame=single]
+% fc-cache
+% fc-list > fontlist.txt
+% \end{Verbatim}
+% fontlist.txt 中将列出大量字体信息，通常将以类似如下的格式存储：
+% \begin{Verbatim}[frame=single]
+% Times New Roman:style=Normal
+% Adobe 宋体 Std,Adobe Song Std,Adobe Song Std L,Adobe 宋体 Std L:style=L,Regular
+% \end{Verbatim}
+% 在 xeCJK 中使用的字体族名是上面列表中冒号前的部分。
+% 对于多个字体名的字体族，尽量选择全英文的字体名。
+% 
+% 另外需要特别说明的是：我们采用黑体来表现加粗的宋体，因为实际上并不存在粗宋体这样的字体。
+% Microsoft Word 系列软件是通过将原始宋体平移叠加获得加粗的效果，这其实是一种伪粗宋体。
+% 粗宋体在排版上是极不美观的，北邮《关于研究生学位论文格式的统一要求》中也并没有要求粗宋体的使用，因此我们在 \BUPTGraduateThesis{} 中屏蔽了粗宋体。
+% 
+% 对于英文字体，\BUPTGraduateThesis{} 定义的衬线、非衬线以及等宽字体分别为 Times New Roman 、Arial 以及 Courier New。
+% 
+% \begin{function}{中文字号}
+%   \begin{syntax}
+%     |\chuhao| |\xiaochu| |\yihao| |\xiaoyi| |\erhao| |\xiaoer| |\sanhao| |\xiaosan| |\sihao| |\xiaosi| |\dawu| |\wuhao| |\xiaowu| |\liuhao| |\xiaoliu| |\qihao| |\bahao|
+%   \end{syntax}
+% \end{function}
+% \BUPTGraduateThesis{}定义了一组字号设置命令。
+% {\bfseries 在正文部分，除非有特殊需要，应该尽量避免手动修改字号。}
+% \begin{table}[!h]
+%   \centering
+%   \begin{tabular}{llll}
+%     \toprule
+%     命令 & 名称 & 字号（bp） & 说明 \\
+%     \midrule
+%     \cs{chuhao}    & 初号  & 42              & \\
+%     \cs{xiaochu}   & 小初  & 36              & \\
+%     \cs{yihao}     & 一号  & 26              & \\
+%     \cs{xiaoyi}    & 小一  & 24              & \\
+%     \cs{erhao}     & 二号  & 22              & \\
+%     \cs{xiaoer}    & 小二  & 18              & 封面论文题目\\
+%     \cs{sanhao}    & 三号  & 16              & 章标题，摘要页论文题目\\
+%     \cs{xiaosan}   & 小三  & 15              & 摘要标题\\
+%     \cs{sihao}     & 四号  & 14              & 摘要字号 \\
+%     \cs{xiaosi}    & 小四  & 12              & 正文默认字号 \\
+%     \cs{dawu}      & 大五  & 11              & \\
+%     \cs{wuhao}     & 五号  & 10.5            & 页眉、页脚，图表名\\
+%     \cs{xiaowu}    & 小五  & \hphantom{0}9   & 脚注\\
+%     \cs{liuhao}    & 六号  & \hphantom{0}7.5 & \\
+%     \cs{xiaoliu}   & 小六  & \hphantom{0}6.5 & \\
+%     \cs{qihao}     & 七号  & \hphantom{0}5.5 & 脚注序号\\
+%     \cs{bahao}     & 八号  & \hphantom{0}5   &   \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+% 
+% \begin{function}{中文标点}
+% \end{function}
+% 当使用 \XeTeX{} 引擎时，所有中文标点符号都可以直接输入。
+% 当使用非 \XeTeX{} 引擎时，破折号的输入需要区别对待——只有通过 |\CJKemdash| 才可以得到正确的破折号。
+% 
+% \subsubsection{使用缩略语}
+% 在正文中可以通过 |\gls*|\marg{entry} 使用事先声明的缩略语。
+% 当第一次使用某缩略语时，该命令自动替换为
+% \begin{center} 
+%   \meta{中文全称}（\meta{英文全称}，\meta{缩写}）
+% \end{center}
+% 以后再次用到该缩略语时，该命令自动替换为 \meta{缩写}。
+% 例如：
+% \begin{Verbatim}[frame=single]
+% \gls*{DFT} 是一种常用的信号变换。因为存在快速算法，\gls*{DFT} 得到了广泛的应用。
+% \end{Verbatim}
+% 如果第一个 |\gls*{DFT}| 是对缩略语 DFT 的首次引用，那么上面这个例子将被自动替换为
+% \begin{Verbatim}[frame=single]
+% 离散 Fourier 变换（Discrete Fourier Transform，DFT）是一种常用的信号变换。因为
+% 存在快速算法，DFT 得到了广泛的应用。
+% \end{Verbatim}
+% 
+% \begin{function}{中英混排}
+% \end{function}
+% 传统基于 CJK 宏包的中文方案中，|CJK*| 环境默认会吃掉后面未受保护的空格，对于中英文混排、中文和行内公式混排的情况，会使得中英文间距、中文和行内公式的间距过小，排版不美观。
+% 因此传统 CJK 宏包的方案通常需要使用 |\CJKtilde| 命令重新定义波浪符的意义，将其定义为一个可断行的弹性距离，加在中英文之间调整他们的距离。（波浪符的原意为不可断行的空格，若定义了 |\CJKtilde|，则需要用 |\nbs| 获得波浪符的作用。）
+% 不停的输入波浪符给用户带来了不小的麻烦，大大影响论文撰写的效率。
+% 
+% 而在 \XeTeX{} 引擎下，xeCJK 对中英文混排、中文和行内公式混排做了很好的优化处理，默认情况下已经保留了中英文之间以及中文和行内公式之间的弹性空格，毋需再输入波浪符。
+% 不过根据 xeCJK 用户说明文档中对 |CJKecgle| 的描述，xeCJK 有时不能正确调整间距，此时可以手动添加空格（即用空格取代 CJK 方案中的波浪符），以保留混排时的弹性空格。
+% 
+% \subsubsection{数学相关}
+% \begin{function}{定理相关}
+%   定理环境使用的一般形式为
+% \end{function}
+% \noindent\framebox[\textwidth][l]{%
+% \begin{tabular}{l}
+% \cs{begin\marg{定理环境}\oarg{定理名称}} \\
+% \quad\marg{定理内容} \\
+% \cs{end\marg{定理环境}}
+% \end{tabular}
+% }
+%
+% \BUPTGraduateThesis{} 提供下列定理环境：
+% \begin{table}[!h]
+%   \centering
+%   \begin{tabular}{ll}
+%     \toprule
+%     命令 & 含义 \\
+%     \midrule
+%     |assumption|     & 假设 \\
+%     |definition|     & 定义 \\
+%     |proposition|    & 命题 \\
+%     |proof|          & 证明 \\
+%     |lemma|          & 引理 \\
+%     |theorem|        & 定理 \\
+%     |axiom|          & 公理 \\
+%     |corollary|      & 推论 \\
+%     |example|        & 例 \\
+%     |remark|         & 注释 \\
+%     |problem|        & 问题 \\
+%     |conjecture|     & 猜想 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+% 
+% \subsection{参考文献功能}
+% \changes{v2.0}{2013/11/20}{增添参考文献功能说明}
+% \changes{v5.0}{2014/04/14}{增添部分参考文献规则改进说明}
+% \changes{v6.0}{2015/01/02}{增添各类参考文献域说明}
+% \subsubsection{基本功能说明}
+% \BUPTGraduateThesis{} 支持两种参考文献位置：分章参考文献（默认）与全局参考文献。
+% 其中，分章参考文献方式将在论文的每章结束前，列出该章所引用的参考文献；
+% 全局参考文献方式将在论文正文的最后一章结束后，列出全文所引用的参考文献。
+% 无论采取何种方式，参考文献的数据都共享于 bare_thesis.bib 中，方便统一管理。
+% 
+% 参考文献位置通过修改文档类的 |chapbib| 参数控制，|true| 为分章参考文献，|false| 为全局参考文献。
+% 此外，还需要相应地修改 makethesis 文件的 |BIBTYPE| 选项为 |chapbib| 或 |allbib|，因为对于分章参考文献和全局参考文献而言，需要编译的次数是不一样的。
+% 
+% \subsubsection{常用域说明}
+% \BUPTGraduateThesis{} 的参考文献域纪录在表 \ref{tab:bibfield}。
+% \begin{table}[!h]
+%   \centering
+%   \caption{参考文献常用域}
+%   \label{tab:bibfield}
+%   \begin{tabular}{ll}
+%     \toprule
+%     命令 & 含义 \\
+%     \midrule
+%     |address|             & 出版地/专利国别 \\
+%     |author|              & 作者/申请者/责任者 \\
+%     |booktitle|           & 专著名/论文集名/报纸名 \\
+%     |date|                & 日期 \\
+%     |edition|             & 版本 \\
+%     |editor|              & 编者 \\
+%     |ehowpublished|       & 载体类型标识 \\
+%     |etype|               & 电子文献类型标识 \\
+%     |language|            & 语言 \\
+%     |multiseriesmsg|      & 非连续页或分期期刊的分期信息 \\
+%     |note|                & 附加说明 \\
+%     |number|              & 期号 \\
+%     |pages|               & 参考页码/页码范围 \\
+%     |publisher|           & 出版者 \\
+%     |series|              & 专利号/标准号 \\
+%     |title|               & 论文题目/报告题目/专利题目/标准题目/文章题目/文献题目 \\
+%     |translator|          & 译者 \\
+%     |volume|              & 卷号 \\
+%     |year|                & 年 \\
+%     |source|              & 来源或URL \\
+%     |CTLformation_name|       & 用户控制接口：控制姓名的格式 \\
+%     |CTLmaxnum_authors|       & 用户控制接口：控制最多显示作者数 \\
+%     |CTLname_author_eng|      & 用户控制接口：控制学位论文作者的英文姓名 \\
+%     |CTLname_author_chs|      & 用户控制接口：控制学位论文作者的中文姓名 \\
+%     |CTLswitch_peerreview|    & 用户控制接口：控制是否盲审格式 \\
+%     |CTLswitch_chs_punc|      & 用户控制接口：控制是否使用中文句点 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+% 其中，|language| 域用于控制参考文献条目的显示语言，具体体现在标点符号的中、西文化。
+% 放空自动使用英文，赋值为 |"chs"| 并且 |CTLswitch_chs_punc| 为 |"1"| 则使用中式标点符号。
+% 其余各域的使用和含义请参考 bare_thesis.bib 中所给的示例。
+% |CTLname_author_eng| 域、|CTLname_author_chs| 域和 |CTLswitch_peerreview| 域仅作用于 |BUPTGraduateThesisBSTCTL| 文献类型的 |BSTpeerreview| 条目，分别记录了学位论文作者的英、中文名字，用于在盲审版本中隐去发表论文目录相关作者的名字。
+% |CTLmaxnum_authors| 域仅作用于 |BUPTGraduateThesisBSTCTL| 文献类型的 |BSTcontrol| 条目，用于控制显示的作者数，超出的作者以“等”或者“et al”代替。
+% 
+% \subsubsection{发表论文目录}
+% 通过\BUPTGraduateThesis{} 生成“攻读学位期间发表的学术论文目录”需要在 bare_thesis.tex 的导言区使用 |\newcite|\marg{type}\marg{title} 先声明发表学术论文的类型。
+% 随后，需要将发表论文信息以参考文献条目的形式记录在 pubs.bib 文件中。
+% 最后，需要在 pubs.tex 文件中使用 |\bibliography|\marg{type}|{pubs}| 指明数据文件，并使用 |\nocite|\marg{type}\marg{entry} 添加条目。
+% 具体的使用可以参见 example 文件夹中的示例。
+%
+% \subsubsection{英文姓名输入规范}
+% 外籍人士的英文名通常分为四个部分：
+% \begin{itemize}
+% \item “First Name”，包含 first name 和 middle name；
+% \item “von”，诸如 de la 和 von der 之类；
+% \item “Last Name”，就是 surname；
+% \item “Jr”，诸如 Jr 和 III 之类；
+% \end{itemize}
+% 为了使 BibTex 可以正确的识别英文姓名的各个部分，用户需要在 .bib 文件中依照如下规则输入姓名并以 “and” 隔开，才可以符合规范地输出姓名。
+% 输入规则可以分为以下三种：
+% \begin{enumerate}
+% \item First von Last；
+% \item von Last, First；
+% \item von Last, Jr, First；
+% \end{enumerate}
+% 注意：如果出现 “Jr” 部分，就一定需要用第三种输入规范。
+%
+% \section{辅助功能}
+% \changes{v1.1}{2013/07/30}{增添字数统计方法说明}
+% \changes{v4.0}{2013/12/26}{增添 Windows 下修正 TeXcount 的说明}
+% \changes{v5.0}{2014/04/14}{修改 makethesis 中的字数统计，可以统计参考文献中的字数}
+% \subsection{字数统计}
+% \LaTeX{} 的字数统计无法通过对 PDF 文件检测字数实现，只能借助 TeXcount\footnote{\url{http://app.uio.no/ifi/texcount/}} 工具。
+% TeXcount 通过 Perl 语言编写，对 \TeX{} 源文件进行字符过滤进行中文字符的统计。
+% \TeXLive{} 2013 和 \CTeX{} 发行版本中已经预装了 TeXcount，不过需要用户自行确认系统中是否已经安装 Perl\footnote{Unix/Linux 系统已经默认安装 Perl；Windows 系统需要自行安装 Perl，建议安装 ActivePerl （\url{http://www.activestate.com/activeperl}）。}。
+% 
+% 安装完成之后，进入工作文件夹并通过如下命令统计字符数：
+% \begin{Verbatim}[frame=single]
+% texcount -ch -inc -incbib -html -v -sum bare_thesis.tex > wordcount.html
+% \end{Verbatim}
+% TeXcount 会自动查找 bare_thesis.tex 文件中与其他 \TeX{} 文件的依赖关系，统计全文各个章节文件的字符数，并\textbf{输出在 HTML 文件中}。
+% 方便起见，我们已经将上述命令集成到 makethesis 中，用户可以通过选择 wordcount 参数调用 makethesis 实现相应功能。
+% \textbf{注意：Windows 下，由于 CMD 对 ANSI 颜色支持不足，因此为了顺利实现字数的统计，需要搜索 texcount.pl 文件，并将第 11 行左右的如下语句注释掉}：
+% \begin{Verbatim}[frame=single]
+% require Win32::console::ANSI;
+% #Win32::Console::ANSI::->import();
+% \end{Verbatim}
+% 
+% 另外，参考文献字数的统计实际上是统计 *.bbl 文件中的字符数，因此如果清除过辅助文件，就需要再运行一遍 makethesis 生成 *.bbl 文件。
+% 
+% \changes{v4.0}{2013/12/26}{添加常见问题解答}
+% \changes{v5.0}{2014/04/14}{修改关于安装的常见问题解答}
+% \changes{v5.2}{2014/07/17}{添加新问题解答}
+% \subsection{常见问题解答}
+% \begin{enumerate}
+%   \item Q：为何我的电脑安装 \BUPTGraduateThesis{} 失败？\\
+% A：\BUPTGraduateThesis{} 在 Windows+\TeXLive{} 2013、Windows+\CTeX{} 2.9.2.164、Linux+\TeXLive{} 2013 和 OSX Yosemite+\TeXLive{} 2014 下均测试通过，如果在这几种组合下安装失败，请优先检查所需字体是否齐全。
+% 对于 \CTeX{} 的用户，请确保安装的是 full 版本的 \CTeX{}，以保证宏包的完整性。
+% 另外，强烈建议用户定时更新宏包，以保证宏包的时效性，\CTeX{} 的更新方法为“开始-ctex-mitex-maintanence(admin)-update”，\TeXLive{} 2013 的更新方法为在 CMD 或者 SHELL 下输入 tlmgr update --all。
+% \textbf{注意：\CTeX{} 2.9.2.164 已经多年没有更新，因此一定要采用上述命令更新宏包，但是校园网环境更新较慢，而且需要多尝试几遍才能成功。}
+% 由于大多数用户都是在安装时出错，所以我们将安装信息的输出重定向去除，方便定位错误。
+% 我们还提供免安装版本的压缩包，方便初次使用的用户。
+% 
+%   \item Q：为何使用 \BUPTGraduateThesis{} 时，段落的间距会忽大忽小？\\
+% A：这是 \LaTeX{} 根据当前页的内容以及标题不能单独位于页底等各种情况，自动将段落之间的空白间距弹性地自动调整。
+% 如果不希望 \LaTeX{} 进行自动调整，请在 bare_thesis.tex 文件内的 |\begin{document}| 后添加命令 |\raggedbottom|。
+% 
+%   \item Q：我用 VISIO 导出的矢量图非常大，编译非常耗时，最后生成的文件也非常硕大，是否有比较好的解决方法？\\
+% A：解决办法有两种：第一种是在生成图片的时候尽可能减少点和线条的数量；第二种是抛弃矢量图，另存为 JPG 图的时候提高生成图片的 DPI，也就是每英寸所打印的点数，提高到 150 以上已经可以保证显示器和打印机的输出质量了。
+% 毕业论文格式要求中并没有限制必须使用矢量图，因此此法是可行的。
+% \end{enumerate}
+% 
+% 
+% \end{documentation}
+% 
+% \StopEventually{}
+% 
+% \endinput
+% 
+% \begin{implementation}
+% 
+% \section{主文件与配置文件代码实现}
+% \subsection{定义选项}
+% \label{sec:implmnt:defopt}
+% 使用\pkg{xkeyval}定义类选项。
+%    \begin{macrocode}
+%<cls>\RequirePackage{xkeyval}
+%    \end{macrocode}
+%
+% 定义论文类型
+%    \begin{macrocode}
+%<*cls>
+\define@choicekey*[bupt]{class}{degree}[\bupt@tempa\bupt@degree]{%
+  doctor,master,pmaster,pdoctor}[doctor]{\relax}
+%    \end{macrocode}
+%
+% 保密等级选项
+%    \begin{macrocode}
+\define@choicekey*[bupt]{class}{classlevel}[\bupt@tempa\bupt@classlevel]{%
+  open,control,confidential,classified,topsecret,%
+  customized}[open]{\relax}
+%    \end{macrocode}
+%
+% 献辞页选项
+%    \begin{macrocode}
+\define@boolkey[bupt]{class}{dedication}[false]{\relax}
+%    \end{macrocode}
+%
+% 答辩委员会名单页选项
+%    \begin{macrocode}
+\define@boolkey[bupt]{class}{committee}[true]{\relax}
+%    \end{macrocode}
+%
+% 数学字体选项
+%    \begin{macrocode}
+\define@choicekey*[bupt]{class}{mathfont}[\bupt@tempa\bupt@mathfont]{%
+  mathptmx, mtplus, mtpro, cm}[mathptmx]{\relax}
+%    \end{macrocode}
+%
+% 参考文献格式选项
+%    \begin{macrocode}
+\define@boolkey[bupt]{class}{chapbib}[false]{\relax}
+%    \end{macrocode}
+%
+% 输出选项
+%    \begin{macrocode}
+\define@choicekey*[bupt]{class}{finish}[\bupt@tempa\bupt@finish]{%
+  online,print,peerreview}[print]{\relax}
+%    \end{macrocode}
+%
+% 后台驱动选项
+%    \begin{macrocode}
+\define@choicekey*[bupt]{class}{driver}[\bupt@tempa\bupt@driver]{%
+  dvips,dvipdf,pdftex,xetex}[xetex]{%
+  \PassOptionsToPackage{#1}{graphicx}
+  \PassOptionsToPackage{#1}{hyperref}
+  \PassOptionsToPackage{#1}{xcolor}
+}
+%    \end{macrocode}
+%
+% 设置默认选项
+%    \begin{macrocode}
+\presetkeys[bupt]{class}{%
+  degree=doctor,%
+  classlevel=open,%
+  dedication=false,%
+  committee=true,%
+  mathfont=mathptmx,%
+  chapbib=false,%
+  finish=print,%
+  driver=xetex%
+}{}
+\DeclareOptionX*{\PassOptionsToClass{\CurrentOption}{book}}
+\ProcessOptionsX[bupt]<class>\relax
+\LoadClass[12pt, a4paper, openright, twoside]{book}%
+%</cls>
+%    \end{macrocode}
+%
+% \subsection{加载宏包}
+% \label{sec:implmnt:loadpkg}
+%    \begin{macrocode}
+%<*cls>
+\RequirePackage{calc}
+%    \end{macrocode}
+%
+% 字体使用扩展 T1 与 TS1 编码
+%    \begin{macrocode}
+\RequirePackage[T1]{fontenc}
+\RequirePackage{textcomp}
+%    \end{macrocode}
+%
+% 字体
+%    \begin{macrocode}
+\ifcase\bupt@mathfont\relax
+  \RequirePackage{mathptmx}
+  \RequirePackage{courier}
+  \RequirePackage[scaled=.92]{helvet}
+  \RequirePackage{amsmath}
+  \RequirePackage{amssymb}
+\or
+  \RequirePackage{amsmath}
+  \RequirePackage{amssymb}
+  \RequirePackage[mtbold,subscriptcorrection,mtplusscr,T1]{mathtime}       
+  \newcommand\hmmax{0}
+\or
+  \RequirePackage{times}
+  \RequirePackage[scaled=.92]{helvet} 
+  \RequirePackage{amsmath}
+  \RequirePackage[subscriptcorrection,slantedGreek]{mtpro}
+  \RequirePackage[mtphrb]{mtpams}
+  \RequirePackage[mtpscr,mtpfrak]{mtpb}
+\or
+  \RequirePackage{amsmath}
+  \RequirePackage{amssymb}
+\fi
+\RequirePackage{bm}
+%    \end{macrocode}
+%
+% 数学相关
+%    \begin{macrocode}
+\RequirePackage[low-sup]{subdepth}
+\RequirePackage[amsmath,thmmarks,hyperref]{ntheorem}
+%    \end{macrocode}
+%
+% \changes{v5.2}{2014/07/17}{新版 xeCJK 取消对 CJKnumber 选项的支持，改为手动添加该宏包}
+% \changes{v7.0}{2016/11/23}{新版 xeCJK 取消对 indentfirst 选项的支持，改为手动添加该宏包}
+% 中文相关：\XeTeX{} 采用字体配置文件设定中文字体
+%    \begin{macrocode}
+\ifnum\bupt@driver=3
+  \RequirePackage[AutoFakeBold,AutoFakeSlant]{xeCJK}
+  \RequirePackage{CJKnumb}
+  \xeCJKsetcharclass{"2460}{"2473}{1}
+  \xeCJKsetup{EmboldenFactor=3}
+  \punctstyle{quanjiao}
+  \def\CJK@null{\kern\CJKnullspace\char"3007 \kern\CJKnullspace}
+  \defaultfontfeatures{Mapping=tex-text}
+  \input{xeCJK-fonts.def}
+%</cls>
+%<*def>
+  \setCJKmainfont[BoldFont={SimHei}, ItalicFont={KaiTi}]{SimSun}
+  \setCJKsansfont{SimHei}
+  \setCJKmonofont{KaiTi}
+  \setCJKfamilyfont{song}{SimSun}
+  \setCJKfamilyfont{hei}{SimHei}
+  \setCJKfamilyfont{fs}{FangSong}
+  \setCJKfamilyfont{kai}{KaiTi}
+  \setCJKfamilyfont{li}{LiSu}
+  \setCJKfamilyfont{you}{YouYuan}
+  \setCJKfamilyfont{asong}{Adobe Song Std}
+  \setCJKfamilyfont{ahei}{Adobe Heiti Std}
+  \setmainfont{Times New Roman}
+  \setsansfont{Arial}
+  \setmonofont{Courier New}
+  \newcommand{\song}{\CJKfamily{song}}    % 中易宋体
+  \def\songti{\song}
+  \newcommand{\hei}{\CJKfamily{hei}}      % 中易黑体
+  \def\heiti{\hei}
+  \newcommand{\fs}{\CJKfamily{fs}}        % 中易仿宋体
+  \def\fangsong{\fs}
+  \newcommand{\kai}{\CJKfamily{kai}}      % 中易楷体
+  \def\kaishu{\kai}
+  \newcommand{\asong}{\CJKfamily{asong}}  % Adobe宋体
+  \def\asongti{\asong}
+  \newcommand{\ahei}{\CJKfamily{ahei}}    % Adobe黑体
+  \def\aheiti{\ahei}
+%</def>
+%<*cls>
+\else
+  \RequirePackage{CJKutf8}
+  \RequirePackage{CJKnumb}
+  \RequirePackage{CJKpunct}
+\fi
+% 控制bibtex生成的参考文献中URL的字体与正文字体相同
+\RequirePackage{url}
+\urlstyle{same}
+\RequirePackage{indentfirst}
+%    \end{macrocode}
+%
+% 标题格式
+%    \begin{macrocode}
+\RequirePackage{caption}
+\RequirePackage{everysel}
+\RequirePackage{titlesec}
+%    \end{macrocode}
+%
+% 图形与表格
+%    \begin{macrocode}
+\RequirePackage{graphicx}
+\RequirePackage{subfig}
+%由subfigure宏包改为较新的subfig宏包，配合\subfloat实现更方便的子图功能，不再需要结合minipage
+\RequirePackage{array}
+\RequirePackage{longtable}
+\RequirePackage{booktabs}
+\RequirePackage[neverdecrease]{paralist}
+%    \end{macrocode}
+%
+% 参考文献
+%    \begin{macrocode}
+\ifbupt@class@chapbib
+  \RequirePackage[sectionbib,square,super,numbers,sort&compress]{natbib}
+  \let\bupt@bibcite\bibcite
+  \let\bupt@nocite\nocite
+  \let\bupt@include\include
+  \let\bupt@org@bibcite\org@bibcite
+  \let\bupt@bibliographystyle\bibliographystyle
+  \let\bupt@bibliography\bibliography
+  \RequirePackage{chapterbib}
+  \def\usechapbib{}
+\else
+  \RequirePackage[square,super,numbers,sort&compress]{natbib}
+\fi
+\RequirePackage{multibib}
+% multibib宏包用于产生发表论文列表的参考文献
+% [resetlabels]选项与其他宏包冲突，导致参考文献序号无法对齐，因此取消该选项，改为每一章手动重置参考文献计数器
+%\RequirePackage{bibentry}
+%    \end{macrocode}
+%
+% 书签与链接
+%    \begin{macrocode}
+\RequirePackage[usenames,dvipsnames,cmyk]{xcolor}
+\RequirePackage{hyperref}
+\hypersetup{
+  unicode,%
+  bookmarksopen=true,%
+  colorlinks=true,%
+  citebordercolor=white
+}
+\ifnum\bupt@finish=0%
+  \hypersetup{%
+    linkcolor=Blue,%
+    citecolor=Blue,%
+    urlcolor=Mahogany%
+  }
+  \RequirePackage{wallpaper}
+\else%
+  \hypersetup{%
+    linkcolor=black,%
+    citecolor=black,%
+    urlcolor=black%
+  }
+\fi
+% \changes{v7.0}{2016/11/23}{glossaries 宏包应于 hyperref 宏包之后调用}
+% 缩略语
+\RequirePackage[toc,section=chapter]{glossaries}
+\ifnum\bupt@finish=2
+  \def\ispeerreview{}
+\fi
+\ifnum\bupt@driver=3
+  \relax
+\else
+  \RequirePackage{breakurl}
+\fi
+%</cls>
+%    \end{macrocode}
+%
+% \subsection{中文支持}
+%
+% \subsubsection{中文字体与字号}
+%    \begin{macrocode}
+%<*cls>
+\ifnum\bupt@driver=3
+  \relax
+\else
+  \newcommand\song{\CJKfamily{song}}
+  \newcommand\hei{\CJKfamily{hei}}
+  \newcommand\kai{\CJKfamily{kai}}
+  \newcommand\fs{\CJKfamily{fs}}
+\fi
+\newlength\CJKtwospaces
+\newlength\CJKfourspaces
+\newlength\bupt@linespace
+\newcommand{\bupt@choosefont}[2]{%
+  \setlength{\bupt@linespace}{#2*\real{#1}}%
+  \fontsize{#2}{\bupt@linespace}\selectfont
+}
+\def\bupt@define@fontsize#1#2{%
+  \expandafter\newcommand\csname #1\endcsname[1][\baselinestretch]{%
+    \bupt@choosefont{##1}{#2}
+  }
+}
+\bupt@define@fontsize{chuhao}{42bp}
+\bupt@define@fontsize{xiaochu}{36bp}
+\bupt@define@fontsize{yihao}{26bp}
+\bupt@define@fontsize{xiaoyi}{24bp}
+\bupt@define@fontsize{erhao}{22bp}
+\bupt@define@fontsize{xiaoer}{18bp}
+\bupt@define@fontsize{sanhao}{16bp}
+\bupt@define@fontsize{xiaosan}{15bp}
+\bupt@define@fontsize{sihao}{14bp}
+\bupt@define@fontsize{xiaosi}{12bp}
+\bupt@define@fontsize{dawu}{11bp}
+\bupt@define@fontsize{wuhao}{10.5bp}
+\bupt@define@fontsize{xiaowu}{9bp}
+\bupt@define@fontsize{liuhao}{7.5bp}
+\bupt@define@fontsize{xiaoliu}{6.5bp}
+\bupt@define@fontsize{qihao}{5.5bp}
+\bupt@define@fontsize{bahao}{5bp}
+% 封面标题字号
+\bupt@define@fontsize{covertitlesize}{32bp}
+\bupt@define@fontsize{ecovertitlesize}{26bp}
+% 图注字号
+\bupt@define@fontsize{annotationsize}{8pt}
+% 默认字号
+\renewcommand\normalsize{%
+  \@setfontsize\normalsize{12bp}{20bp}
+  \abovedisplayskip=10bp \@plus 2bp \@minus 2bp
+  \abovedisplayshortskip=10bp \@plus 2bp \@minus 2bp
+  \belowdisplayskip=\abovedisplayskip
+  \belowdisplayshortskip=\abovedisplayshortskip
+}
+% 字距
+\newcommand*{\ziju}[1]{\renewcommand{\CJKglue}{\hskip #1}}
+%    \end{macrocode}
+% 关键字间隔
+\newcommand{\keyspace}{\hspace{2em}}
+%
+% 特殊 CJK 符号: 空白字符、脚注用带圈数字
+%    \begin{macrocode}
+\ifnum\bupt@driver=3
+  \def\CJK@spaceChar{\char"3007} % why 0x3007?
+  \def\CJKtwochars{\CJK@spaceChar\CJK@spaceChar}
+  \def\bupt@circnum#1{%
+  \ifnum \value{#1} = 1 \char"2460
+  \else\ifnum \value{#1} = 2 \char"2461
+  \else\ifnum \value{#1} = 3 \char"2462
+  \else\ifnum \value{#1} = 4 \char"2463
+  \else\ifnum \value{#1} = 5 \char"2464
+  \else\ifnum \value{#1} = 6 \char"2465
+  \else\ifnum \value{#1} = 7 \char"2466
+  \else\ifnum \value{#1} = 8 \char"2467
+  \else\ifnum \value{#1} = 9 \char"2468
+  \else\ifnum \value{#1} = 10 \char"2469
+  \else\ifnum \value{#1} = 11 \char"246A
+  \else\ifnum \value{#1} = 12 \char"246B
+  \else\ifnum \value{#1} = 13 \char"246C
+  \else\ifnum \value{#1} = 14 \char"246D
+  \else\ifnum \value{#1} = 15 \char"246E
+  \else\ifnum \value{#1} = 16 \char"246F
+  \else\ifnum \value{#1} = 17 \char"2470
+  \else\ifnum \value{#1} = 18 \char"2471
+  \else\ifnum \value{#1} = 19 \char"2472
+  \else\ifnum \value{#1} = 20 \char"2473
+    \else \textcircled{\qihao\arabic{#1}}
+    \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+  }
+  \def\CJKleftparen{\char"FF08}
+  \def\CJKrightparen{\char"FF09}
+\else
+  \def\CJKtwochars{\CJKchar{"030}{"000}\CJKchar{"030}{"000}}
+  \def\bupt@circnum#1{%
+% 1$\sim$10的带圈数字直接使用字库中的带圈数字
+  \ifnum \value{#1} = 1 \CJKchar{"024}{"060}
+  \else\ifnum \value{#1} = 2 \CJKchar{"024}{"061}
+  \else\ifnum \value{#1} = 3 \CJKchar{"024}{"062}
+  \else\ifnum \value{#1} = 4 \CJKchar{"024}{"063}
+  \else\ifnum \value{#1} = 5 \CJKchar{"024}{"064}
+  \else\ifnum \value{#1} = 6 \CJKchar{"024}{"065}
+  \else\ifnum \value{#1} = 7 \CJKchar{"024}{"066}
+  \else\ifnum \value{#1} = 8 \CJKchar{"024}{"067}
+  \else\ifnum \value{#1} = 9 \CJKchar{"024}{"068}
+  \else\ifnum \value{#1} = 10 \CJKchar{"024}{"069}
+% 11$\sim$99的带圈数字
+  \else \textcircled{\qihao\arabic{#1}}
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+  }
+% 圆括号
+  \def\CJKleftparen{\CJKchar{"0FF}{"008}}
+  \def\CJKrightparen{\CJKchar{"0FF}{"009}}
+\fi
+\def\CJKfourchars{\CJKtwochars\CJKtwochars}
+% 破折号
+\newcommand{\CJKemdash}{%
+  \kern0.3ex\rule[0.8ex]{\CJKtwospaces}{0.25bp}\kern0.3ex%
+}
+%</cls>
+%    \end{macrocode}
+%
+% \subsection{中文段落格式}
+% \subsubsection{章节标题格式}
+%    \begin{macrocode}
+%<*cls>
+\renewcommand\chapter{%
+  \secdef\@chapter\@schapter%
+}
+\renewcommand\section{%
+  \@startsection {section}{1}{\z@}%
+  {-24bp \@plus -1ex \@minus -.2ex}%
+  {6bp \@plus .2ex}%
+  {\bfseries\csname bupt@title@font\endcsname\sihao[1.429]}% 此处控制section标题的字体
+}
+\renewcommand\subsection{%
+  \@startsection{subsection}{2}{\z@}%
+  {-16bp \@plus -1ex \@minus -.2ex}%
+  {6bp \@plus .2ex}%
+  {\bfseries\csname bupt@title@font\endcsname\xiaosi[1.538]}% 此处控制subsection标题的字体
+}
+\renewcommand\subsubsection{%
+  \@startsection{subsubsection}{3}{\z@}%
+  {-16bp \@plus -1ex \@minus -.2ex}%
+  {6bp \@plus .2ex}%
+  {\song\csname bupt@title@font\endcsname\xiaosi[1.667]}%
+}
+%</cls>
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+%<*cfg>
+\newcommand\CJKprepartname{第}
+\newcommand\CJKpartname{部分}
+\newcommand\CJKprechaptername{第}
+\newcommand\CJKchaptername{章}
+\renewcommand\appendixname{附录}
+\newcommand\CJKthepart{\CJKnumber{\@arabic\c@part}}
+\newcommand\CJKthechapter{\CJKnumber{\@arabic\c@chapter}}
+\renewcommand\chaptername{\CJKprechaptername\CJKthechapter\CJKchaptername}
+%</cfg>
+%    \end{macrocode}
+% 辅助宏
+%    \begin{macrocode}
+%<*cls>
+\def\bupt@preschapter{}
+\def\bupt@schapterformat{}
+\renewcommand{\chaptermark}[1]{\@mkboth{\@chapapp\ ~~#1}{}}
+\def\@chapter[#1]#2{%
+  \cleardoublepage\phantomsection%
+  \thispagestyle{bupt@headings}%
+  \global\@topnum\z@%
+  \@afterindenttrue%
+  \ifnum \c@secnumdepth >\m@ne
+  \if@mainmatter
+  \refstepcounter{chapter}%
+  \addcontentsline{toc}{chapter}{%
+    \protect\numberline{\@chapapp}#1%
+  }
+  \else
+  \addcontentsline{toc}{chapter}{#1}%
+  \fi
+  \else
+  \addcontentsline{toc}{chapter}{#1}%
+  \fi
+  \chaptermark{#1}%
+  \@makechapterhead{#2}
+}
+\def\@makechapterhead#1{%
+  \vspace*{20bp}%
+  {%
+    \parindent \z@ \centering
+    \bfseries\csname bupt@title@font\endcsname\sanhao[1] % 此处控制正文的章标题以及附录标题
+    \ifnum \c@secnumdepth >\m@ne
+    \@chapapp\hskip1em
+    \fi
+    #1\par\nobreak
+    \vskip 24bp
+  }
+}
+\def\@schapter#1{%
+  \cleardoublepage\phantomsection%
+  \thispagestyle{bupt@plain}%
+  \global\@topnum\z@%
+  \@afterindenttrue%
+  \ifx\bupt@preschapter\empty
+    \relax
+  \else
+    \bupt@preschapter
+  \fi
+  \@makeschapterhead{#1}
+  \@afterheading}
+\def\@makeschapterhead#1{%
+  \vspace*{20bp}%
+  {%
+    \parindent \z@ \centering
+    \bfseries\csname bupt@title@font\endcsname % 此处控制<摘要><abstract><目录><符号对照表><致谢><发表文章>的标题
+    \ifx\bupt@schapterformat\empty
+    \sanhao[1]
+    \else
+    \bupt@schapterformat
+    \fi
+    \interlinepenalty\@M
+    #1\par\nobreak
+    \vskip 24bp%
+  }
+}
+\def\bupt@chapter*{%
+  \@ifnextchar [ %
+  {\bupt@@chapter}     % 如果是\bupt@chapter*[，按\bupt@@chapter处理
+  {\bupt@@chapter@}    % 否则是\bupt@chapter*{<title>}，按\bupt@@chapter@处理
+}
+\def\bupt@@chapter@#1{%
+  \bupt@@chapter[#1]{#1}%
+}
+\def\bupt@@chapter[#1]#2{%
+  \@ifnextchar [ % ]
+  {\bupt@@@chapter[#1]{#2}}      % 如果是\bupt@chapter*[#1]{#2}[，
+                                 % 按\bupt@@@chapter[#1]{#2}处理
+  {\bupt@@@chapter[#1]{#2}[][]}} % 如果是\bupt@chapter*[#1]{#2}
+                                 % 按\bupt@@@chapter[#1]{#2}[][]处理
+\def\bupt@@@chapter[#1]#2[#3]{%
+  \@ifnextchar [ % ]
+  {\bupt@@@@chapter[#1]{#2}[#3]} % 如果是\bupt@chapter*[#1]{#2}[#3][#4]，
+                                  % 按\bupt@@@@chapter[#1]{#2}[#3]处理 
+  {\bupt@@@@chapter[#1]{#2}[#3][]}% 如果是\bupt@chapter*[#1]{#2}[#3]
+                                  % 按\bupt@@@@chapter[#1]{#2}[#3][]处理 
+}
+\def\bupt@@@@chapter[#1]#2[#3][#4]{%
+  \cleardoublepage%
+  \phantomsection%
+  \def\@tmpa{#1}               % <tocline>
+  \def\@tmpb{#3}               % <titlesize>
+  \def\@tmpc{#4}               % <prefix>
+  \ifx\@tmpa\@empty
+    \pdfbookmark[0]{#2}{\expandafter\@gobble\string#2}
+  \else
+    \addcontentsline{toc}{chapter}{#1}
+  \fi
+  \ifx\@tmpc\@empty
+    \def\bupt@preschapter{}
+  \else
+    \def\bupt@preschapter{%
+      \par{%
+        \sanhao[1]\bfseries%\hei % 此处控制中文摘要的标题
+        \begin{center}
+          {#4}
+        \end{center}
+      }
+    }
+  \fi
+  \chapter*{#2}
+  \@mkboth{#2}{#2}
+}
+%</cls>
+%    \end{macrocode}
+%
+% \subsubsection{目录格式}
+%    \begin{macrocode}
+%<*cfg>
+\renewcommand\contentsname{目\hspace{1em}录}
+\renewcommand\listfigurename{插图索引}
+\renewcommand\listtablename{表格索引}
+%</cfg>
+%<*cls>
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\renewcommand\tableofcontents{%
+  \bupt@chapter*[]{\contentsname}
+  \normalsize\@starttoc{toc}}
+\def\bupt@toc@font{}%{\bfseries}%sffamily
+\def\@tocrmarg{2em}
+\def\@dotsep{1} % 目录点间的距离
+\def\@dottedtocline#1#2#3#4#5{%
+  \ifnum #1>\c@tocdepth \else
+  \vskip \z@ \@plus.2\p@
+  {\leftskip #2\relax \rightskip \@tocrmarg \parfillskip -\rightskip
+    \parindent #2\relax\@afterindenttrue
+    \interlinepenalty\@M
+    \leavevmode
+    \@tempdima #3\relax
+    \advance\leftskip \@tempdima \null\nobreak\hskip -\leftskip
+    {\csname bupt@toc@font\endcsname #4}\nobreak
+    \leaders\hbox{$\m@th\mkern \@dotsep mu\hbox{.}\mkern \@dotsep mu$}\hfill
+    \nobreak{\normalfont \normalcolor #5}%
+    \par}%
+  \fi}
+\renewcommand*\l@chapter[2]{%
+  \ifnum \c@tocdepth >\m@ne
+  \addpenalty{-\@highpenalty}%
+  \vskip 4bp \@plus\p@
+  \setlength\@tempdima{4em}%
+  \begingroup
+  \parindent \z@ \rightskip \@pnumwidth
+  \parfillskip -\@pnumwidth
+  \leavevmode
+  \advance\leftskip\@tempdima
+  \hskip -\leftskip
+  {\bfseries\csname bupt@toc@font\endcsname #1} % numberline is called here, and it use @tempdima % 此处控制目录中章标题的字体
+  \leaders\hbox{$\m@th\mkern \@dotsep mu\hbox{.}\mkern \@dotsep mu$}\hfill
+  \nobreak{\normalfont \normalcolor #2}\par
+  \penalty\@highpenalty
+  \endgroup
+  \fi}
+%</cls>
+%    \end{macrocode}
+%
+% 中文段落首行缩进两字符
+%    \begin{macrocode}
+%<*cls>
+\def\CJKindent{%
+  \settowidth\CJKtwospaces{\CJKtwochars}%
+  \parindent\CJKtwospaces
+}
+%    \end{macrocode}
+%
+% 脚注
+%    \begin{macrocode}
+\renewcommand{\thefootnote}{\bupt@circnum{footnote}}
+\renewcommand{\thempfootnote}{\bupt@circnum{mpfootnote}}
+\def\footnoterule{%
+  \vskip-3\p@\hrule\@width0.3\textwidth\@height0.4\p@\vskip2.6\p@%
+}
+\let\bupt@footnotesize\footnotesize
+\renewcommand\footnotesize{\bupt@footnotesize\xiaowu[1.5]}
+\def\@makefnmark{%
+  \textsuperscript{\hbox{\normalfont\@thefnmark}}%
+}
+\long\def\@makefntext#1{
+  \bgroup
+  \setbox\@tempboxa\hbox{%
+    \hb@xt@ 2em{\@thefnmark\hss}}
+  \leftmargin\wd\@tempboxa
+  \rightmargin\z@
+  \linewidth \columnwidth
+  \advance \linewidth -\leftmargin
+  \parshape \@ne \leftmargin \linewidth
+  \footnotesize
+  \@setpar{{\@@par}}%
+  \leavevmode
+  \llap{\box\@tempboxa}%
+  #1\par%
+  \egroup%
+}
+%    \end{macrocode}
+%
+% 导言区支持中文
+%    \begin{macrocode}
+\def\bupt@active@cjk{
+  \count@=127
+  \@whilenum\count@<255 \do{%
+    \advance\count@ by 1
+    \lccode`\~=\count@
+    \catcode\count@=\active
+    \lowercase{\def~{\kern1ex}}}}
+%    \end{macrocode}
+%
+% 在文档模版结束后加载配置文件 buptgraduatethesis.cfg
+%    \begin{macrocode}
+\AtEndOfClass{\bupt@active@cjk\input{buptgraduatethesis.cfg}}
+%    \end{macrocode}
+% 
+% 解决selectfont冲突
+%    \begin{macrocode}
+\def\bupt@fixselectfont{%
+  \DeclareRobustCommand{\selectfont}{%
+    \ifx\f@linespread\baselinestretch 
+    \else\set@fontsize\baselinestretch\f@size\f@baselineskip
+    \fi
+    \xdef\font@name{%
+      \csname\curr@fontshape/\f@size\endcsname}%
+    \pickup@font
+    \font@name
+    % CJK addition:
+    \CJK@bold@false
+    \csname \curr@fontshape\endcsname
+    % everysel addition:
+    \@EverySelectfont@EveryHook
+    \@EverySelectfont@AtNextHook
+    \gdef\@EverySelectfont@AtNextHook{}%
+    % end additions
+    \size@update
+    \enc@update
+  }
+}
+%    \end{macrocode}
+%
+% 启用CJK
+%    \begin{macrocode}
+\def\bupt@beginCJK{%
+  \begin{CJK*}{UTF8}{song}%
+    \sloppy\CJKindent\CJKtilde%
+  }
+\def\bupt@endCJK{%
+  \bupt@inside@back@cover%
+  \bupt@back@cover%
+\end{CJK*}%
+}
+\ifnum\bupt@driver=3
+  \AtBeginDocument{\CJKindent}
+\else
+  \let\bupt@begindocumenthook\@begindocumenthook
+  \let\bupt@enddocumenthook\@enddocumenthook
+  \def\AtBeginDocument{\g@addto@macro\bupt@begindocumenthook}
+  \def\AtEndDocument{\g@addto@macro\bupt@enddocumenthook}
+  \def\@begindocumenthook{\bupt@begindocumenthook\bupt@beginCJK}
+  \def\@enddocumenthook{\bupt@endCJK\bupt@enddocumenthook}
+\fi
+%</cls>
+%    \end{macrocode}
+%
+% \subsection{论文格式}
+%
+% \subsubsection{总体格式}
+% 论文页面采用为标准 A4 (210 mm $\times$ 297 mm) 幅面，版芯尺寸
+% 为 155 mm$\times$230 mm。
+%    \begin{macrocode}
+%<*cls>
+\AtBeginDvi{\special{papersize=\the\paperwidth,\the\paperheight}}
+\AtBeginDvi{\special{!%
+    \@percentchar\@percentchar BeginPaperSize: a4
+    ^^Ja4^^J\@percentchar\@percentchar EndPaperSize}}
+\setlength{\hoffset}{-1in}
+\addtolength{\hoffset}{5mm}           % 装订线: 1in + \hoffset = 5mm
+\setlength{\voffset}{-1in}            %
+\setlength\marginparwidth{0mm}        %
+\setlength\marginparsep{0mm}          %
+\setlength{\textwidth}{\paperwidth}   %
+\addtolength{\textwidth}{-55mm}       % 版芯宽度: 155mm = 210mm - 55mm
+\setlength{\oddsidemargin}{22.5mm}    % 内侧页边距: 奇数页左侧页边距
+\setlength{\evensidemargin}{22.5mm}   % 外侧页边距: 偶数页左侧页边距 
+\setlength{\textheight}{\paperheight} %
+\setlength{\headheight}{20pt}         % 页眉高度: 20pt
+\setlength{\topskip}{0pt}             % 
+\setlength{\skip\footins}{15pt}       %
+\setlength{\topmargin}{25mm}          % 上边距: 25 mm (原为30mm)
+\setlength{\footskip}{15mm}           %
+\setlength{\headsep}{5mm}             %
+\addtolength{\textheight}{-77mm}      % 文字高度:  297mm (纸张高度)
+                                      %          - 25mm (上边距) 
+                                      %          -  7mm (\headerheight, 20pt) 
+                                      %          -  5mm (\headsep)
+                                      %          - 15mm (\footskip)
+                                      %          - 25mm (下边距)
+%    \end{macrocode}
+%
+% 论文分为前置部分、主体部分和结尾部分。其中，前置部分包括封面、封二、
+% 题名页、英文题名页、摘要页、目次页等；主体部分包括论文各章节；结尾部
+% 分。前置部分页码使用大写罗马数字；主体部分页码使用阿拉伯数字。
+%    \begin{macrocode}
+\renewcommand\frontmatter{%
+  \cleardoublepage%
+  \@mainmatterfalse%
+  \pagenumbering{Roman}
+  \pagestyle{bupt@empty}
+}
+\renewcommand\mainmatter{%
+  \cleardoublepage
+  \@mainmattertrue
+  \pagenumbering{arabic}
+  \pagestyle{bupt@headings}
+}
+\def\bupt@nocite#1{%
+  \@bsphack%
+  \ifx \@onlypreamble \document %
+  \@for \@citeb :=#1\do {%
+    \edef \@citeb {\expandafter \@firstofone \@citeb }
+    \if@filesw \immediate \write \@auxout {%
+      \string \citation {\@citeb }
+    }
+    \fi%
+    \@ifundefined {b@\@citeb }{%
+      \G@refundefinedtrue \@latex@warning {%
+        Citation `\@citeb ' undefined}
+    }{%
+    }
+  }
+  \else%
+  \@latex@error {%
+    Cannot be used in preamble%
+  }
+  \@eha%
+  \fi%
+  \@esphack%
+}
+\renewcommand\backmatter{%
+  % \let\bibcite\bupt@bibcite
+  % \let\nocite\bupt@nocite
+  \ifbupt@class@chapbib%
+  \let\bibsection\bupt@bibsection
+  %\renewcommand*\chapter{\subsection}
+  \let\bibcite\bupt@bibcite
+  \let\nocite\bupt@nocite
+  \let\include\bupt@include
+  \let\org@bibcite\bupt@org@bibcite
+  \let\bibliographystyle\bupt@bibliographystyle
+  \let\bibliography\bupt@bibliography
+  \fi
+  \long\def\bibsection{%
+    \subsection*{%
+      \bibname \@mkboth{%
+        \MakeUppercase{\bibname}
+      }
+      % {%
+      %   \MakeUppercase{\bibname}
+      % }
+    }
+  }
+%  \show\bibsection
+  \cleardoublepage%
+}
+%    \end{macrocode}
+%
+% 定义三种页眉页脚页面
+%    \begin{macrocode}
+\let\bupt@cleardoublepage\cleardoublepage
+\newcommand{\bupt@clearemptydoublepage}{%
+  \clearpage{\pagestyle{empty}\bupt@cleardoublepage}}
+\let\cleardoublepage\bupt@clearemptydoublepage
+%% ps@bupt@empty 无页眉，无页脚
+\def\ps@bupt@empty{%
+  \let\@oddhead\@empty%
+  \let\@evenhead\@empty%
+  \let\@oddfoot\@empty%
+  \let\@evenfoot\@empty%
+}
+%% ps@bupt@plain 无页眉，页脚为五号页码
+\def\ps@bupt@plain{%
+  \let\@oddhead\@empty%
+  \let\@evenhead\@empty%
+  \def\@oddfoot{\hfil\wuhao\thepage\hfil}%
+  \let\@evenfoot=\@oddfoot%
+}
+%% ps@bupt@headings 有页眉有页脚
+\def\ps@bupt@headings{%
+  \def\@oddhead{%
+    \vbox to\headheight{%
+      \hb@xt@\textwidth{%
+        \xiaowu\song\hfill\leftmark%
+      }%
+      \vskip3pt\hbox{%
+        \vrule width\textwidth height0.4pt depth0pt
+      }
+    }
+  }
+  \def\@evenhead{%
+    \vbox to\headheight{%
+      \hb@xt@\textwidth{%
+        \xiaowu\song\bupt@page@head\hfill
+      }%
+      \vskip3pt\hbox{%
+        \vrule width\textwidth height0.4pt depth0pt
+      }
+    }
+  }
+  \def\@oddfoot{\hfil\wuhao\thepage\hfil}
+  \let\@evenfoot=\@oddfoot
+}
+%% ps@bupt@pubheadings 有页眉有页脚（发表文章）
+\def\ps@bupt@pubheadings{%
+  \def\@oddhead{%
+    \vbox to\headheight{%
+      \hb@xt@\textwidth{%
+        \xiaowu\song\hfill\bupt@label@tableofpublications%
+      }%
+      \vskip3pt\hbox{%
+        \vrule width\textwidth height0.4pt depth0pt
+      }
+    }
+  }
+  \def\@evenhead{%
+    \vbox to\headheight{%
+      \hb@xt@\textwidth{%
+        \xiaowu\song\bupt@page@head\hfill
+      }%
+      \vskip3pt\hbox{%
+        \vrule width\textwidth height0.4pt depth0pt
+      }
+    }
+  }
+  \def\@oddfoot{\hfil\wuhao\thepage\hfil}
+  \let\@evenfoot=\@oddfoot
+}
+%</cls>
+%    \end{macrocode}
+%
+% \subsubsection{封面和封底}
+%
+%    \begin{macrocode}
+%<*cls>
+\newcommand\bupt@def@metadata[2][]{%
+  \def\@tempa{#1}
+  \ifx\@tempa\@empty
+    \def\bupt@def{\expandafter\gdef}
+  \else
+    \def\bupt@def{\long\expandafter\gdef}
+  \fi
+  \bupt@def\csname #2\endcsname##1{%
+    \bupt@def\csname bupt@meta@#2\endcsname{##1}
+  }
+  \csname #2\endcsname{}
+}
+%</cls>
+%    \end{macrocode}
+%
+% 声明元数据
+%    \begin{macrocode}
+%<*cls>
+\bupt@def@metadata{studentid}
+\bupt@def@metadata{ctitle}
+\bupt@def@metadata{cdegree}
+\bupt@def@metadata{cdepartment}
+\bupt@def@metadata{cmajor}
+\bupt@def@metadata{cauthor}
+\bupt@def@metadata{classnumber}
+\bupt@def@metadata{udc}
+\bupt@def@metadata{schoolserial}
+\bupt@def@metadata{ctrainingmode}
+\bupt@def@metadata{csupervisor}
+\bupt@def@metadata{cassosupervisor}
+\bupt@def@metadata{ccosupervisor}
+\bupt@def@metadata{startdate}
+\bupt@def@metadata{finishdate}
+\bupt@def@metadata[long]{cabstract}
+\bupt@def@metadata{ckeywords}
+\bupt@def@metadata{etitle}
+\bupt@def@metadata{edegree}
+\bupt@def@metadata{edepartment}
+\bupt@def@metadata{emajor}
+\bupt@def@metadata{eauthor}
+\bupt@def@metadata{etrainingmode}
+\bupt@def@metadata{esupervisor}
+\bupt@def@metadata{eassosupervisor}
+\bupt@def@metadata{ecosupervisor}
+\bupt@def@metadata[long]{eabstract}
+\bupt@def@metadata{ekeywords}
+\bupt@def@metadata{hiddenmark}
+\bupt@def@metadata{customclasslevel}
+%</cls>
+%    \end{macrocode}
+%
+% 定义标签
+%    \begin{macrocode}
+%<*cfg>
+\ifcase\bupt@degree\relax
+  \def\bupt@page@head{北京邮电大学工学博士学位论文}
+  \def\bupt@label@covertitle{博士学位论文}
+  \def\bupt@label@ecovertitle{Doctoral Dissertation}
+  \def\bupt@label@cmajor{专\hspace{2em}业}
+  \def\bupt@label@emajor{Subject}
+  \or
+  \def\bupt@page@head{北京邮电大学工学硕士学位论文}
+  \def\bupt@label@covertitle{硕士学位论文（学术学位）}
+  \def\bupt@label@ecovertitle{Thesis for Master Degree}
+  \def\bupt@label@cmajor{学科专业}
+  \def\bupt@label@emajor{Subject}
+  \or
+  \def\bupt@page@head{北京邮电大学工程硕士学位论文}
+  \def\bupt@label@covertitle{硕士学位论文（专业学位）}
+  \def\bupt@label@ecovertitle{Thesis for Master Degree}
+  \def\bupt@label@cmajor{学科专业}
+  \def\bupt@label@emajor{Subject}
+  \or
+  \def\bupt@page@head{北京邮电大学博士后研究工作报告}
+  \def\bupt@label@covertitle{博士后研究工作报告}
+  \def\bupt@label@ecovertitle{Report for Postdoctoral Research}
+  \def\bupt@label@classnumber{分类号}
+  \def\bupt@label@udc{U\hfill D\hfill C}
+  \def\bupt@label@schoolserial{编\hspace{1em}号}
+  \def\bupt@label@cmajor{专\hspace{1em}业（二级学科）名称}
+  \def\bupt@label@emajor{Subject}
+\fi
+\ifnum\bupt@degree=3
+  \def\bupt@label@cauthor{博\hfill 士\hfill 后\hfill 姓\hfill 名}
+  \def\bupt@label@csupervisor{合\hfill 作\hfill 导\hfill 师}
+  \def\bupt@label@cdepartment{流动站（一级学科）名称}
+  \def\bupt@label@classlevel{密\hspace{1em}级}
+  \def\bupt@label@startdate{研究工作起始时间}
+  \def\bupt@label@finishdate{研究工作期满时间}
+\else
+  \def\bupt@label@cauthor{姓\hspace{2em}名}
+  \def\bupt@label@eauthor{Candidate}
+  \def\bupt@label@csupervisor{导\hspace{2em}师}
+  \def\bupt@label@esupervisor{Supervisor}
+  \def\bupt@label@ctrainingmode{培养方式}
+  \def\bupt@label@etrainingmode{Training Mode}
+  \def\bupt@label@cdepartment{学\hspace{2em}院}
+  \def\bupt@label@edepartment{Institute}
+  \def\bupt@label@studentid{学\hspace{2em}号}
+  \def\bupt@label@estudentid{Student No.}
+  \def\bupt@label@classlevel{密级}
+  \def\bupt@label@eclasslevel{Secret Level}
+\fi
+\def\bupt@label@ctitle{题目}
+\def\bupt@label@etitle{Title}
+\def\bupt@label@cschoolname{北京邮电大学}
+\def\bupt@label@eschoolname{Beijing University of Posts and Telecommunications}
+\def\bupt@title@sep{：}
+\def\bupt@title@esep{:}
+
+
+%</cfg>
+%    \end{macrocode}
+%
+% 盲审隐藏命令
+%    \begin{macrocode}
+%<*cls>
+\def\bupt@hide#1{%
+  \ifnum\bupt@finish=2
+    \bupt@meta@hiddenmark
+  \else
+    {#1}
+  \fi%
+}
+%</cls>
+%    \end{macrocode}
+%
+% 密级
+%    \begin{macrocode}
+%<*cfg>
+\ifcase\bupt@classlevel\relax
+  \def\bupt@meta@classlevel{公开}
+  \def\bupt@meta@eclasslevel{Open}
+\or
+  \def\bupt@meta@classlevel{限制}
+  \def\bupt@meta@eclasslevel{Control}
+\or
+  \def\bupt@meta@classlevel{秘密}
+  \def\bupt@meta@eclasslevel{Confidential}
+\or
+  \def\bupt@meta@classlevel{机密}
+  \def\bupt@meta@eclasslevel{Classified}
+\or
+  \def\bupt@meta@classlevel{绝密}
+  \def\bupt@meta@eclasslevel{Topsecret}
+\or
+  \def\bupt@meta@classlevel\bupt@meta@customclasslevel
+  \def\bupt@meta@eclasslevel\bupt@meta@customclasslevel
+\fi
+%</cfg>
+%    \end{macrocode}
+%
+% 封面(封一)
+%    \begin{macrocode}
+%<*cls>
+\newlength\bupt@titlewidth
+\newcommand{\titlebreak}{}
+\ifnum\bupt@degree=3
+\newcommand{\bupt@front@cover}{%
+  \song\noindent%
+  \begin{minipage}[t]{.4\textwidth}
+    \sihao[1.24]
+    \setlength{\extrarowheight}{0pt}
+    \setlength{\arrayrulewidth}{0.5bp}
+    \begin{tabular}{lp{5em}}
+      \bupt@label@classnumber\bupt@title@sep & {\hfil\bupt@hide{\bupt@meta@classnumber}\hfil} \\
+      [-3pt] \cline{2-2} \\
+      \bupt@label@udc\bupt@title@sep & {\hfil\bupt@hide{\bupt@meta@udc}\hfil} \\
+      [-3pt] \cline{2-2} \\
+    \end{tabular}%
+    \hfill%
+  \end{minipage}
+  \hspace{\fill}%
+  \begin{minipage}[t]{.4\textwidth}
+    \hfill%
+    \sihao[1.24]
+    \setlength{\extrarowheight}{0pt}
+    \setlength{\arrayrulewidth}{0.5bp}
+    \begin{tabular}{lp{5em}}
+      \bupt@label@classlevel\bupt@title@sep & {\hfil\bupt@hide{\bupt@meta@classlevel}\hfil} \\
+      [-3pt] \cline{2-2} \\
+      \bupt@label@schoolserial\bupt@title@sep & {\hfil\bupt@hide{\bupt@meta@schoolserial}\hfil} \\
+      [-3pt] \cline{2-2} \\
+    \end{tabular}
+  \end{minipage}\\[2cm]
+  \begin{minipage}[t]{\textwidth}
+    \centering
+    \covertitlesize[1.0]{\ziju{0.5em}\hei\bupt@label@cschoolname}\par
+  \end{minipage}\\[2cm]
+  \begin{minipage}[t]{\textwidth}
+    \centering
+    \covertitlesize[1.0]{\ziju{0.5em}\hei\bupt@label@covertitle}\par
+  \end{minipage}\\[2.5cm]
+  \begin{minipage}[t]{\textwidth}
+    \centering
+    \xiaoer[1.5]
+    \renewcommand\titlebreak{\\\global\let\bupt@long@title\@empty}
+    {\hei\bupt@meta@ctitle}\par
+  \end{minipage}\\[2cm]
+  \begin{minipage}[t]{\textwidth}
+    \centering
+    \xiaoer[1.5]
+    {\hei\bupt@meta@cauthor}\par
+  \end{minipage}\\[4cm]
+  \begin{minipage}[t]{\textwidth}
+    \centering
+    \sihao[2.0]{\ziju{0.5em}\bupt@label@cschoolname}\par
+  \end{minipage}
+  \normalfont
+}
+\else
+\newcommand{\bupt@front@cover}{%
+  \asong\bfseries
+  \vspace*{-1.15cm}
+  \begin{minipage}[t]{\textwidth}%右上角密级
+    \sihao
+    \raggedleft
+    \ifnum\bupt@classlevel=0
+      \bupt@label@classlevel\bupt@title@sep\bupt@meta@classlevel
+    \else
+      \bupt@label@classlevel\bupt@title@sep\bupt@meta@classlevel
+    \fi
+  \end{minipage}\\[1.71cm]
+  \begin{minipage}[t]{\textwidth}%北京邮电大学、硕士（博士）学位论文、logo
+    \centering
+    \hspace{0.3cm}
+    \includegraphics[width=11.6cm]{logo/buptname}\par
+    \vspace{0.24cm}
+    \covertitlesize[1.0]{\ahei\bupt@label@covertitle}\par
+    \vspace{0.95cm}
+    \includegraphics[width=3.09cm]{logo/buptseal}
+  \end{minipage}\\[1.8cm]
+  \begin{minipage}[t]{\textwidth}%题目
+    \centering
+    \xiaoer[1.5]
+    \vspace{0.5cm}
+    \settowidth{\bupt@titlewidth}{\bupt@meta@ctitle}
+    \setlength{\extrarowheight}{0pt}
+    \setlength{\arrayrulewidth}{0.5bp}
+    \begin{tabular}{@{}p{36bp}@{\bupt@title@sep}p{95mm}@{}}
+      \bupt@label@ctitle & %
+      \parbox[t]{95mm}{%
+        \centering%
+        \renewcommand\titlebreak{\\\global\let\bupt@long@title\@empty}
+        \rule[-5bp]{95mm}{0.5bp}\\[-27bp]
+        \bupt@meta@ctitle%
+        \ifx\bupt@long@title\@empty
+          \\[-27bp]%
+          \rule[-5bp]{95mm}{0.5bp}%
+        \else
+          \ifdim\bupt@titlewidth>95mm
+            \\[-27bp]%
+            \rule[-5bp]{95mm}{0.5bp}%
+          \fi
+        \fi
+      }%
+      \\%
+    \end{tabular}
+  \end{minipage}\\[1.3cm]
+  \begin{minipage}[t]{\textwidth}%学号姓名等
+    \centering
+    \sihao[1.24]
+    \setlength{\extrarowheight}{0pt}
+    \setlength{\arrayrulewidth}{0.5bp}
+    \begin{tabular}{lc}
+      \bupt@label@studentid\bupt@title@sep & {\hfill\bupt@hide{\bupt@meta@studentid}\hfill} \\
+      [-3pt] \cline{2-2} \\
+      \bupt@label@cauthor\bupt@title@sep & {\hfill\bupt@hide{\bupt@meta@cauthor}\hfill} \\
+      [-3pt] \cline{2-2} \\
+      \bupt@label@cmajor\bupt@title@sep & {\hfill\bupt@meta@cmajor\hfill} \\
+      [-3pt] \cline{2-2} \\
+      \bupt@label@ctrainingmode\bupt@title@sep & {\hfill\bupt@hide{\bupt@meta@ctrainingmode}\hfill} \\
+      [-3pt] \cline{2-2} \\
+      \bupt@label@csupervisor\bupt@title@sep & {\hfill\bupt@hide{\bupt@meta@csupervisor}\hfill} \\
+      [-3pt] \cline{2-2} \\
+      \bupt@label@cdepartment\bupt@title@sep & {\hfill\bupt@meta@cdepartment\hfill} \\
+      [-3pt] \cline{2-2} \\
+    \end{tabular}
+  \end{minipage}\\[0.7cm]
+  \normalfont
+}
+\fi
+%</cls>
+%    \end{macrocode}
+%
+% 英文封面(封一)
+%    \begin{macrocode}
+%<*cls>
+\newcommand{\bupt@front@ecover}{
+  \cleardoublepage
+  \ifnum\bupt@degree=3
+    \relax
+  \else
+  \asong\bfseries
+  \vspace*{-1.15cm}
+  \begin{minipage}[t]{\textwidth}%右上角密级
+    \sihao
+    \raggedleft
+    \ifnum\bupt@classlevel=0
+      \bupt@label@eclasslevel\bupt@title@sep\bupt@meta@eclasslevel
+    \else
+      \bupt@label@eclasslevel\bupt@title@sep\bupt@meta@eclasslevel
+    \fi
+  \end{minipage}\\[1.71cm]
+  \begin{center}
+    \begin{minipage}[t]{\textwidth}%北京邮电大学、硕士（博士）学位论文、logo
+%      \vspace{2.5cm}
+      \centering
+      \includegraphics[width=15cm]{logo/bupt_en_name_and_seal}\par
+      \vspace{1cm}
+      \ecovertitlesize[1.0]{\ahei\bupt@label@ecovertitle}\par
+    \end{minipage}\\[1.8cm]
+    \begin{minipage}[t]{\textwidth}%题目
+      \centering
+      \xiaoer[1.5]
+      \vspace{0.5cm}
+      \settowidth{\bupt@titlewidth}{\bupt@meta@etitle}
+      \setlength{\extrarowheight}{0pt}
+      \setlength{\arrayrulewidth}{0.5bp}
+      \begin{tabular}{r p{110mm}}
+        \bupt@label@etitle~\bupt@title@esep & %
+        \parbox[t]{110mm}{%
+          \centering%
+          \renewcommand\titlebreak{\\\global\let\bupt@long@title\@empty}
+          \ifdim\bupt@titlewidth<110mm
+            \bupt@meta@etitle
+            \ifx \bupt@long@etitle\@empty
+              \\[-54bp]%
+              \rule[-5bp]{110mm}{0.5bp}\\
+              \rule[-5bp]{110mm}{0.5bp}
+            \else
+              \\[-27bp]%
+              \rule[-5bp]{110mm}{0.5bp}
+            \fi
+          \else
+            \rule[-5bp]{110mm}{0.5bp}\\%
+            \rule[-5bp]{110mm}{0.5bp}\\[-54bp]%
+            \bupt@meta@etitle\\[-27bp]%
+            \rule[-5bp]{110mm}{0.5bp}
+          \fi
+        }%
+        \\%
+      \end{tabular}
+    \end{minipage}\\[1.5cm]
+    \begin{minipage}[t]{\textwidth}%学号姓名等
+      \centering
+      \sihao[1.24]
+      \setlength{\extrarowheight}{0pt}
+      \setlength{\arrayrulewidth}{0.5bp}
+      \begin{tabular}{rc}
+        \bupt@label@estudentid\bupt@title@esep & {\hfill\bupt@hide{\bupt@meta@studentid}\hfill} \\
+        [-3pt] \cline{2-2} \\
+        \bupt@label@eauthor\bupt@title@esep & {\hfill\bupt@hide{\bupt@meta@eauthor}\hfill} \\
+        [-3pt] \cline{2-2} \\
+        \bupt@label@emajor\bupt@title@esep & {\hfill\bupt@meta@emajor\hfill} \\
+        [-3pt] \cline{2-2} \\
+        \bupt@label@etrainingmode\bupt@title@esep & {\hfill\bupt@hide{\bupt@meta@etrainingmode}\hfill} \\
+        [-3pt] \cline{2-2} \\
+        \bupt@label@esupervisor\bupt@title@esep & {\hfill\bupt@hide{\bupt@meta@esupervisor}\hfill} \\
+        [-3pt] \cline{2-2} \\
+        \bupt@label@edepartment\bupt@title@esep & {\hfill\bupt@meta@edepartment\hfill} \\
+        [-3pt] \cline{2-2} \\
+      \end{tabular}
+    \end{minipage}\\[1cm]
+    \normalfont
+    \fi
+  \end{center}  
+}
+  %</cls>
+  %    \end{macrocode}
+  %
+  % 前封里(封二)、底封里(封三)与封底(封四)
+  %    \begin{macrocode}
+  %<*cls>
+  \newcommand{\bupt@inside@front@cover}{%
+    \cleardoublepage
+    \ifnum\bupt@degree=3
+      \song\noindent%
+      \begin{minipage}[t]{\textwidth}
+        \centering
+        \xiaoer[1.5]
+        \renewcommand\titlebreak{\\\global\let\bupt@long@title\@empty}
+        {\hei\bupt@meta@ctitle}\par
+      \end{minipage}\\[1cm]
+      \begin{minipage}[t]{\textwidth}
+        \centering
+        \xiaoer[1.5]
+        {\hei\bupt@meta@etitle}\par
+      \end{minipage}\\[6cm]
+      \begin{minipage}[t]{\textwidth}
+        \centering
+        \xiaosan[1.5]
+        \setlength{\extrarowheight}{0pt}
+        \setlength{\arrayrulewidth}{0.5bp}
+        \begin{tabular}{lc}
+          \bupt@label@cauthor\bupt@title@sep & {\bupt@hide{\bupt@meta@cauthor}\hfill} \\
+          \bupt@label@cdepartment\bupt@title@sep & {\bupt@meta@cdepartment\hfill} \\
+          \bupt@label@cmajor\bupt@title@sep & {\bupt@meta@cmajor\hfill} \\
+          \bupt@label@ctrainingmode\bupt@title@sep & {\bupt@hide{\bupt@meta@ctrainingmode}\hfill} \\
+          \bupt@label@csupervisor\bupt@title@sep & {\bupt@hide{\bupt@meta@csupervisor}\hfill} \\
+        \end{tabular}
+      \end{minipage}\\[3cm]
+      \begin{minipage}[t]{\textwidth}
+        \centering
+        \xiaosan[1.5]
+        \setlength{\extrarowheight}{0pt}
+        \setlength{\arrayrulewidth}{0.5bp}
+        \begin{tabular}{lc}
+          \bupt@label@startdate\bupt@title@sep & \bupt@meta@startdate \\
+          \bupt@label@finishdate\bupt@title@sep & \bupt@meta@finishdate \\
+        \end{tabular}
+      \end{minipage}
+      \normalfont
+    \else
+      \relax
+    \fi
+}
+\newcommand{\bupt@inside@back@cover}{%
+  \cleardoublepage
+}
+\newcommand{\bupt@back@cover}{%
+}
+  %</cls>
+  %    \end{macrocode}
+  %
+  % 答辩委员会名单页
+  %    \begin{macrocode}
+  %<*cls>
+\def\bupt@committee@title{答辩委员会名单}
+\newcommand{\bupt@committee}{%
+  \cleardoublepage
+  \begin{center}
+    \sanhao\hei\bupt@committee@title
+  \end{center}
+  \input{committee}
+  
+}
+
+
+%</cls>
+%    \end{macrocode}
+%
+% 生成声明与授权页
+%    \begin{macrocode}
+%<*cfg>
+\def\bupt@declaration@title{独创性（或创新性）声明}
+\long\def\bupt@declaration@body{%
+  本人声明所呈交的论文是本人在导师指导下进行的研究工作及取得的研究成果。%
+  尽我所知，除了文中特别加以标注和致谢中所罗列的内容以外，论文中不包含其他人已经发表或撰写过的研究成果，也不包含为获得北京邮电大学或其他教育机构的学位或证书而使用过的材料。%
+  与我一同工作的同志对本研究所做的任何贡献均已在论文中作了明确的说明并表示了谢意。\par%
+  申请学位论文与资料若有不实之处，本人承担一切相关责任。%
+}
+\def\bupt@authorization@title{关于论文使用授权的说明}
+\long\def\bupt@authorization@body{%
+  本人完全了解并同意北京邮电大学有关保留、使用学位论文的规定，即：北京邮电大学拥有以下关于学位论文的无偿使用权，具体包括：学校有权保留并向国家有关部门或机构送交学位论文，有权允许学位论文被查阅和借阅；%
+  学校可以公布学位论文的全部或部分内容，有权允许采用影印、缩印或其它复制手段保存、汇编学位论文，将学位论文的全部或部分内容编入有关数据库进行检索。%
+  （保密的学位论文在解密后遵守此规定）%
+} 
+\def\bupt@label@authorsigniture{本人签名：}
+\def\bupt@label@supervisorsigniture{导师签名：} 
+\def\bupt@label@date{日期：}
+%</cfg>
+%<*cls>
+\newcommand\bupt@underline[2][6em]{%
+  \hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}\hskip3pt%
+}
+%% 独创性声明与授权说明
+\newcommand{\bupt@declaration}{%
+  \begin{center}
+    \sihao[1.5]\hei\bupt@declaration@title
+  \end{center}
+  \par{%
+    \parindent\CJKtwospaces\bupt@declaration@body
+  }
+  \vskip1.2cm
+  \par{%
+    \parindent\CJKtwospaces
+    \bupt@label@authorsigniture\bupt@underline[38mm]\relax
+    \qquad
+    \bupt@label@date\bupt@underline[38mm]\relax
+  }%
+}
+\newcommand{\bupt@authorization}{%
+  \begin{center}
+    \sihao[1.5]\hei\bupt@authorization@title
+  \end{center}
+  \par{%
+    \parindent\CJKtwospaces\bupt@authorization@body
+  }
+  \vskip1.2cm
+  \par{%
+    \parindent\CJKtwospaces
+    \bupt@label@authorsigniture\bupt@underline[38mm]\relax
+    \qquad
+    \bupt@label@date\bupt@underline[38mm]\relax
+  }%
+  \vskip1cm
+  \par{%
+    \parindent\CJKtwospaces
+    \bupt@label@supervisorsigniture\bupt@underline[38mm]\relax
+    \qquad
+    \bupt@label@date\bupt@underline[38mm]\relax
+  }%
+}
+\newcommand{\bupt@makedeclauth}{%
+  \cleardoublepage
+  \vfill
+  \bupt@declaration
+  \vfill
+  \bupt@authorization
+  \vfill
+}
+%</cls>
+%    \end{macrocode}
+%
+% 献辞页
+%    \begin{macrocode}
+%<*cls>
+\newcommand{\BUPT@makededication}{%
+  \cleardoublepage
+  \input{dedication}
+}
+%    \end{macrocode}
+%
+% 生成封面 (包括封面、封面里、英文封面、创新性声明与授权说明页、献辞页、中英文摘要)
+%    \begin{macrocode}
+\newcommand{\makefrontmatter}{
+  \frontmatter%
+  \hypersetup{%
+    pdftitle={\bupt@meta@ctitle},
+    pdfauthor={\bupt@hide{\bupt@meta@cauthor}}
+  }%
+  \phantomsection
+  \pdfbookmark[-1]{\bupt@meta@ctitle}{ctitle}
+  \normalsize%
+  \begin{titlepage}
+    \bupt@front@cover
+    \bupt@front@ecover
+    \bupt@inside@front@cover
+    \ifnum\bupt@degree=3
+    \else
+      \ifnum\bupt@finish=2
+      \else
+      \ifbupt@class@committee
+      \bupt@committee
+      \fi
+      \bupt@makedeclauth
+      \fi
+    \fi
+  \end{titlepage}
+  \ifbupt@class@dedication
+  \bupt@makededication
+  \fi
+  \cleardoublepage
+  \normalsize
+  \bupt@makeabstract
+  \let\@tabular\bupt@tabular%
+  \tableofcontents
+  \listoftables
+  \listoffigures
+}
+%% 生成中英文摘要页
+\newcommand{\bupt@makeabstract}{%
+  \pagestyle{bupt@plain}
+  \pagenumbering{Roman}
+  \bupt@chapter*[]%
+  {\bupt@label@cabstract}%
+  [\xiaosan\hei]%
+  [\centering\sanhao\bupt@meta@ctitle]
+  {
+    \sihao[1.6]
+    \par{
+      \CJKindent
+      \song\bupt@meta@cabstract
+    }\par
+    \vspace{12bp}
+    \setbox0=\hbox{{\hei \bupt@label@ckeywords}}
+    \noindent\hangindent\wd0\hangafter1\box0\bupt@meta@ckeywords
+  }
+  \bupt@chapter*[]%
+  {\bupt@label@eabstract} % no tocline
+  [\xiaosan]
+  [\centering\sanhao\textbf{\MakeUppercase\bupt@meta@etitle}] % 此处控制英文摘要标题的字体
+  {    
+    \sihao[1.5]
+    \par{%
+      \CJKindent
+      \bupt@meta@eabstract
+    }\par
+    \vspace{24bp}
+    \setbox0=\hbox{\textbf{KEY WORDS:\enskip}}
+    \noindent\hangindent\wd0\hangafter1\box0\bupt@meta@ekeywords
+  }
+}
+%</cls>
+%<*cfg>
+\def\bupt@label@ckeywords{关键词：}
+\def\bupt@label@cabstract{摘\hspace{1em}要}
+\def\bupt@label@eabstract{ABSTRACT}
+\def\kwsep{\quad}
+%</cfg>
+%    \end{macrocode}
+%
+% 符号说明
+%    \begin{macrocode}
+%<*cls>
+\newenvironment{listofnotations}[1][2.5cm]{
+  \bupt@chapter*[]{\bupt@label@listofnotations} % 不入目录
+  \noindent\begin{list}{}%
+    {\vskip-30bp\xiaosi[1.6]
+      \renewcommand\makelabel[1]{##1\hfil}
+      \setlength{\labelwidth}{#1}  % 标签盒子宽度
+      \setlength{\labelsep}{0.5cm} % 标签与列表文本距离
+      \setlength{\itemindent}{0cm} % 标签缩进量
+      \setlength{\leftmargin}{\labelwidth+\labelsep+24bp} %
+      \setlength{\rightmargin}{0cm}
+      \setlength{\parsep}{0cm} % 段落间距
+      \setlength{\itemsep}{0cm} % 
+      \setlength{\listparindent}{0cm} % 段落缩进量
+      \setlength{\topsep}{0pt} % 
+    }}{\end{list}}
+%</cls>
+%<cfg>\def\bupt@label@listofnotations{符号对照表}
+%    \end{macrocode}
+%
+% 参考文献表格式
+%    \begin{macrocode}
+%<cfg>\renewcommand\bibname{参考文献}
+%<*cls>
+\let\bupt@bibsection\bibsection
+\ifbupt@class@chapbib\relax%
+\renewcommand{\bibsection}{%
+  \bupt@bibsection%
+  \addcontentsline{toc}{section}{\bibname}\wuhao[1.2]%
+  \setlength{\bibsep}{6bp plus 0.5ex minus 0.2ex}}
+\else
+\renewcommand{\bibsection}{%
+  \bupt@bibsection%
+  \addcontentsline{toc}{chapter}{\bibname}\wuhao[1.2]}
+\fi
+\bibpunct{[}{]}{,}{s}{}{,}
+\renewcommand\NAT@citesuper[3]{%
+  \ifNAT@swa
+  \unskip\kern\p@\textsuperscript{\NAT@@open #1\NAT@@close}%
+  \if*#3*%
+  \else%
+  \ (#3)%
+  \fi%
+  \else%
+  #1%
+  \fi%
+  \endgroup%
+}
+\DeclareRobustCommand\onlinecite{\@onlinecite}
+\def\@onlinecite#1{%
+  \begingroup%
+  \let\@cite\NAT@citenum%
+  \citep{#1}%
+  \endgroup%
+}
+%</cls>
+%    \end{macrocode}
+%
+% 附录
+%    \begin{macrocode}
+%<*cls>
+\let\bupt@appendix\appendix
+\renewenvironment{appendix}{%
+  \bupt@appendix
+  \gdef\@chapapp{\appendixname~\thechapter}
+}{}
+\newenvironment{appendix*}{%
+  \bupt@appendix
+  \gdef\@chapapp{\appendixname}%
+}{} 
+%</cls>
+%    \end{macrocode}
+%
+% 缩略词表
+%    \begin{macrocode}
+%<cfg>\def\bupt@label@listofacronyms{缩略语表}
+%<*cls>
+\setlength{\glsdescwidth}{0.9\linewidth} % 缩略语描述列宽
+\newglossarystyle{bupt@acronyms@style}{  % 设置自定义缩略语表格式
+  \setglossarystyle{long}                % 以 long 样式为基础
+  \renewcommand*{\glossentry}[2]{%
+    \glossentryname{##1} & \glossentrydesc{##1}\char"FF0C\glossentrysymbol{##1}\\
+  }
+}
+\setglossarystyle{bupt@acronyms@style} % 选择自定义的缩略语表样式
+% 设置 acronym 词汇表的标题
+\newglossary[alg]{acronym}{acr}{acn}{\bupt@label@listofacronyms}
+\makeglossaries
+% 重载 \newacronym 命令
+\renewcommand{\newacronym}[4]{%
+  \newglossaryentry{#1}{%
+    type=\acronymtype,%
+    name={#2},%
+    description={#3},%
+    text={#2},%
+    descriptionplural={#3\acrpluralsuffix},%
+    first={#2}, %{#3 (#2)},%
+    plural={#2\acrpluralsuffix},%
+    firstplural={\@glo@descplural\space (\@glo@plural)},%
+    symbol={#4}%
+  }%
+}
+% 重载 \cs{glsdisplayfirst} 命令
+\renewcommand{\glsdisplayfirst}[4]{
+  \!{#3}%
+  \ifnum\bupt@driver=3
+  \!\char"FF08% 中文括号“（”
+  \!{#2}%
+  \char"FF0C% 全宽逗号“，”
+  \!{#1}%
+  \!\char"FF09% 中文括号“）”
+  \else
+  \!\CJKchar{"0FF}{"008}% 中文括号“（”
+  \!{#2}%
+  \CJKchar{"0FF}{"00C}% 全宽逗号“，”
+  \!{#1}%
+  \!\CJKchar{"0FF}{"009}% 中文括号“）”
+  \fi
+}
+\renewcommand{\glsdefaulttype}{acronym}
+\renewcommand{\glossarysection}[2][\@gls@title]{\chapter{#2}}
+\newcommand{\tableofacronyms}{\printglossary[type=\acronymtype]}
+%</cls>
+%    \end{macrocode}
+%
+% 攻读学位期间发表的学术论文目录
+%    \begin{macrocode}
+%<cfg>\def\bupt@label@tableofpublications{攻读学位期间发表的学术论文目录}
+%<*cls>
+\def\newcite#1#2{%
+  \expandafter\gdef\csname bupt@cite@#1\endcsname{#2}
+  \expandafter\newcites{#1}{%
+    \protect%
+    \csname bupt@cite@#1\endcsname%
+  }
+  \ifnum\bupt@finish=2
+  \csname nocite#1\endcsname{BSTpeerreview}
+  \fi
+  \csname nocite#1\endcsname{BSTcontrol}
+  \csname bibliographystyle#1\endcsname{buptgraduatethesis}
+}
+% \def\newcite#1{%
+%   \expandafter\gdef\csname bupt@cite@#1\endcsname{\relax}
+%   \expandafter\newcites{#1}{%
+%     \protect%
+%     \csname bupt@cite@#1\endcsname%
+%   }
+%   \ifnum\bupt@finish=2
+%   \csname nocite#1\endcsname{BSTpeerreview}
+%   \fi
+%   \csname bibliographystyle#1\endcsname{buptgraduatethesis}
+% }
+\newenvironment{tableofpublications}{%
+  \cleardoublepage       % 从奇数页开始
+  % [<tocline>]{<title>}[<titlesize>][<prefix>]
+  \bupt@chapter*[\bupt@label@tableofpublications]{%
+    \bupt@label@tableofpublications} % 学术论文目录标题
+%  \nocite{BSTcontrol}
+% \newcommand*{\bupt@backup@chapter}{\chapter}
+% \renewcommand*{\chapter}{\subsection}
+%  \nobibliography{IEEEabrv,#1}
+%  \begin{enumerate}[{[}1{]}]
+\wuhao[1.2]
+}
+{
+  \renewcommand*{\chapter}{\bupt@backup@chapter}
+%  \end{enumerate}
+}
+%</cls>
+%    \end{macrocode}
+% 致谢
+%    \begin{macrocode}
+%<cfg>\def\bupt@label@acknowledgement{致\hspace{1em}谢}
+%<*cls>
+\newenvironment{acknowledgement}{%
+  \cleardoublepage               % 从奇数页开始
+  \bupt@chapter*[\bupt@label@acknowledgement]{%
+    \bupt@label@acknowledgement}[\bupt@label@acknowledgement]
+}{}
+%</cls>
+%    \end{macrocode}
+%
+% \subsection{数学相关}
+%
+% \subsubsection{公式相关}
+% 允许公式断行、分页 
+%    \begin{macrocode}
+% \allowdisplaybreaks[4]
+%    \end{macrocode}
+%
+% 公式编号
+%    \begin{macrocode}
+%<*cls>
+\renewcommand{\eqref}[1]{\textup{(\ref{#1})}}
+\renewcommand\theequation{%
+  \ifnum \c@chapter>\z@% 
+  \thechapter-%
+  \fi\@arabic\c@equation%
+}
+%    \end{macrocode}
+%
+% \subsubsection{定理相关}
+% 证明环境方块乱跑
+%    \begin{macrocode}
+\gdef\@endtrivlist#1{%
+  \if@inlabel \indent \fi
+  \if@newlist \@noitemerr \fi
+  \ifhmode
+  \ifdim\lastskip >\z@ #1\unskip \par
+  \else #1\unskip \par \fi
+  \fi
+  \if@noparlist \else
+  \ifdim\lastskip >\z@
+  \@tempskipa\lastskip \vskip -\lastskip
+  \advance\@tempskipa\parskip \advance\@tempskipa -\@outerparskip
+  \vskip\@tempskipa
+  \fi
+  \@endparenv
+  \fi #1%
+}
+%    \end{macrocode}
+%
+% 定理用黑体，正文使用宋体，用冒号隔开
+%    \begin{macrocode}
+\renewtheoremstyle{plain}{%
+\item[\hskip\labelsep \theorem@headerfont%
+  ##1\ ##2%
+  \theorem@separator]
+}{%
+\item[\hskip\labelsep \theorem@headerfont%
+  ##1\ ##2\ %
+  \CJKleftparen ##3 \CJKrightparen \!%
+  \theorem@separator\!]%
+}
+\renewtheoremstyle{nonumberplain}{%
+\item[\hskip\labelsep \theorem@headerfont%
+  ##1%
+  \theorem@separator]%
+}{%
+\item[\hskip\labelsep \theorem@headerfont%
+  ##1\ 
+  \CJKleftparen ##3 \CJKrightparen \!%
+  \theorem@separator\!]%
+}
+\theoremstyle{plain}
+\theorembodyfont{\song\rmfamily}
+\theoremheaderfont{\bfseries} % 此处控制定理标题的字体
+\theoremsymbol{}
+%</cls>
+%<*cfg>
+\newtheorem{assumption}{假设}[chapter]
+\newtheorem{definition}{定义}[chapter]
+\newtheorem{proposition}{命题}[chapter]
+\newtheorem{lemma}{引理}[chapter]
+\newtheorem{theorem}{定理}[chapter]
+\newtheorem{axiom}{公理}[chapter]
+\newtheorem{corollary}{推论}[chapter]
+\newtheorem{example}{例}[chapter]
+\newtheorem{remark}{注释}[chapter]
+\newtheorem{problem}{问题}[chapter]
+\newtheorem{conjecture}{猜想}[chapter]
+\theoremsymbol{\ensuremath{\square}}
+\theoremstyle{nonumberplain}
+\newtheorem{proof}{证明：}
+\theoremseparator{}
+%</cfg>
+%    \end{macrocode}
+%
+% \subsection{浮动环境}
+%
+% 浮动环境与正文间距
+%    \begin{macrocode}
+%<*cls>
+\setlength{\floatsep}{12bp \@plus4pt \@minus1pt}
+\setlength{\intextsep}{12bp \@plus4pt \@minus2pt}
+\setlength{\textfloatsep}{12bp \@plus4pt \@minus2pt}
+\setlength{\@fptop}{0bp \@plus1.0fil}
+\setlength{\@fpsep}{12bp \@plus2.0fil}
+\setlength{\@fpbot}{0bp \@plus1.0fil}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.65}
+\renewcommand{\floatpagefraction}{0.60}
+%    \end{macrocode}
+%
+% 图注与表注
+%    \begin{macrocode}
+\let\old@tabular\@tabular
+\def\bupt@tabular{\wuhao[1.5]\old@tabular}
+\DeclareCaptionLabelFormat{bupt}{%
+  {\wuhao[1.5]\kai #1~\rmfamily #2}
+}
+\DeclareCaptionLabelSeparator{bupt}{\hspace{1em}}
+\DeclareCaptionFont{bupt}{\wuhao[1.5]\kai}
+\captionsetup{%
+  labelformat=bupt,%
+  labelsep=bupt,%
+  font=bupt%
+}
+\captionsetup[table]{%
+  position=top,%
+  belowskip={12bp-\intextsep},%
+  aboveskip=3bp%
+}
+\captionsetup[figure]{%
+  position=bottom,%
+  belowskip={12bp-\intextsep},%
+  aboveskip=-2bp%
+}
+\captionsetup[subfloat]{%
+  font=bupt,%
+  captionskip=6bp,%
+  nearskip=6bp,%
+  farskip=0bp,%
+  topadjust=0bp%
+}
+\renewcommand\thefigure{%
+  \ifnum \c@chapter>\z@ 
+  \thechapter-\fi\@arabic\c@figure%
+}
+\renewcommand\thetable{%
+  \ifnum \c@chapter>\z@ %
+  \thechapter-\fi\@arabic\c@table%
+}
+%    \end{macrocode}
+%
+% \subsubsection{三线表}
+%    \begin{macrocode}
+\def\LT@c@ption#1[#2]#3{%
+  \LT@makecaption#1\fnum@table{#3}%
+  \def\@tempa{#2}%
+  \ifx\@tempa\@empty%
+  \else{%
+    \let\\\space%
+    \addcontentsline{lot}{table}{%
+      \protect\numberline{%
+        \tablename\hskip0.5em\thetable%
+      }{#2}
+    }
+  }%
+  \fi%
+}
+\let\bupt@LT@array\LT@array
+\def\LT@array{\wuhao[1.5]\bupt@LT@array}
+\def\hlinewd#1{%
+  \noalign{\ifnum0=`}\fi%
+  \hrule \@height #1 \futurelet
+  \reserved@a\@xhline%
+}
+%</cls>
+%<*cfg>
+\renewcommand\figurename{图}
+\renewcommand\tablename{表}
+%</cfg>
+%    \end{macrocode}
+%
+% \section{参考文献样式文件}
+%<*bst>
+%<<VERB
+%%%%%%%%%%%%%%%%
+% 默认值设置
+%%%%%%%%%%%%%%%%
+% 英文姓名排版格式字符串，按<von><lastname全称><firstname首字母><Jr>格式
+% 默认："von"全小写；"lastname"首字母大写；"firstname"大写；"Jr"首字母大写；
+FUNCTION {default.formation.name} { "{vv~}{ll~}{f{~}}{~jj}" }
+% 列出的最多作者数目
+% 默认：3；
+FUNCTION {default.maxnum.authors} { #3 }
+% 中文标点开关
+% 默认：0；
+FUNCTION {default.switch.chs.punc} { #0 }
+% 盲审版本开关
+% 默认：0；
+FUNCTION {default.switch.peerreview} { #0 }
+
+%%%%%%%%%%%%%%%%
+% 辅助函数
+%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%
+% 版本与提示信息
+%%%%%%%%%%%%%%%%
+FUNCTION {bstfile.version} { "4.0" }
+FUNCTION {bstfile.date} { "2015/01/02" }
+FUNCTION {bstfile.website} { "https://gitcafe.com/rioxwang/BUPTGraduateThesis" }
+
+%%%%%%%%%%%%%%%%
+% 预定义的字符串宏
+%%%%%%%%%%%%%%%%
+% 英文月份
+MACRO {jan} { "January" }
+MACRO {feb} { "February" }
+MACRO {mar} { "March" }
+MACRO {apr} { "April" }
+MACRO {may} { "May" }
+MACRO {jun} { "June" }
+MACRO {jul} { "July" }
+MACRO {aug} { "August" }
+MACRO {sep} { "September" }
+MACRO {oct} { "October" }
+MACRO {nov} { "November" }
+MACRO {dec} { "December" }
+
+%%%%%%%%%%%%%%%%
+% 域定义
+%%%%%%%%%%%%%%%%
+ENTRY {
+  address         % 出版地/专利国别
+  author          % 作者/申请者/责任者
+  booktitle       % 专著名/论文集名/报纸名
+  date            % 日期
+  edition         % 版本
+  editor          % 编者
+  ehowpublished   % 载体类型标识
+  etype           % 电子文献类型标识
+  language        % 语言
+  multiseriesmsg  % 非连续页或分期期刊的分期信息
+  note            % 附加说明
+  number          % 期号
+  pages           % 参考页码/页码范围
+  publisher       % 出版者
+  series          % 专利号/标准号
+  title           % 论文题目/报告题目/专利题目/标准题目/文章题目/文献题目
+  translator      % 译者
+  volume          % 卷号
+  year            % 年
+  source          % 来源或URL
+  CTLformation_name       % 用户控制接口：控制姓名的格式
+  CTLmaxnum_authors       % 用户控制接口：控制最多显示作者数
+  CTLname_author_eng      % 用户控制接口：控制学位论文作者的英文姓名
+  CTLname_author_chs      % 用户控制接口：控制学位论文作者的中文姓名
+  CTLswitch_peerreview    % 用户控制接口：控制是否盲审格式
+  CTLswitch_chs_punc      % 用户控制接口：控制是否使用中文句点
+}
+{}
+{ label }
+
+%%%%%%%%%%%%%%%%
+% 整型变量
+%%%%%%%%%%%%%%%%
+INTEGERS {
+  maxnum.authors
+  switch.chs.punc
+  switch.peerreview
+
+  output.state
+  state.before.bibitem
+  state.mid.bibitem
+
+  num.label
+  maxwidth.label
+  num.names
+  idx.names
+  idx.string
+
+  var.result
+  var.num
+  var.length
+}
+
+%%%%%%%%%%%%%%%%
+% 字符串变量
+%%%%%%%%%%%%%%%%
+STRINGS {
+  formation.name      % 姓名的格式字符串
+  name.author.eng     % 学位论文作者的英文姓名
+  name.author.chs     % 学位论文作者的中文姓名
+
+  var.name
+  var.namelist
+  var.message
+  var.desinator
+  var.string
+  var.string2
+  var.order
+
+  label.widest        % 字符串宽度最大的条目序号
+}
+
+%%%%%%%%%%%%%%%%
+% 底层函数
+%%%%%%%%%%%%%%%%
+% 逻辑非
+% input：栈顶1元素
+% output：栈顶1元素
+FUNCTION {not} {
+  { #0 }
+  { #1 }
+  if$
+}
+
+% 逻辑与
+% input：栈顶2元素
+% output：栈顶1元素
+FUNCTION {and} {
+  { skip$ }
+  { pop$ #0 }
+  if$
+}
+
+% 逻辑或
+% input：栈顶2元素
+% output：栈顶1元素
+FUNCTION {or} {
+  { pop$ #1 }
+  { skip$ }
+  if$
+}
+
+% 判断栈顶字符是否为数字"0"~"9"中的一个
+FUNCTION {is.num} {
+  chr.to.int$
+  duplicate$ "0" chr.to.int$ < not
+  swap$ "9" chr.to.int$ > not
+  and
+}
+
+% 栈顶整数乘以10
+FUNCTION {times.10} {
+  #0 'var.result :=
+
+  { duplicate$ #0 > }
+  { #1 -
+    var.result #10 + 'var.result :=
+  }
+  while$
+
+  pop$
+  var.result
+}
+
+% 将栈顶字符("0"~"9")转换为整数(0~9)
+FUNCTION {char.to.int} {
+  duplicate$ is.num
+  { chr.to.int$ "0" chr.to.int$ - }
+  { "Noninteger character " quote$ * swap$ * quote$ *
+    " in integer field of " * cite$ * warning$
+    #0
+  }
+  if$
+}
+
+% 将栈顶字符串转换为整数
+FUNCTION {string.to.int} {
+  duplicate$ text.length$ 'var.length :=
+  #1 'idx.string :=
+  #0 'var.num :=
+
+  { idx.string var.length > not }
+  { duplicate$ idx.string #1 substring$ char.to.int
+    var.num times.10 +
+    'var.num :=
+    idx.string #1 + 'idx.string :=
+  }
+  while$
+
+  pop$
+  var.num
+}
+
+% 将栈顶的 "yes" 和 "no" 字符串对应的转变为整形的 #1 和 #0
+FUNCTION {yes.no.to.int} {
+  "l" change.case$ duplicate$ "yes" =
+  { pop$ #1 }
+  { duplicate$ "no" =
+    { pop$ #0 }
+    { "Unknown boolean " quote$ * swap$ * quote$ *
+      " in " * cite$ * warning$
+      #0
+    }
+    if$
+  }
+  if$
+}
+
+%%%%%%%%%%%%%%%%
+% 字符串常量
+%%%%%%%%%%%%%%%%
+FUNCTION {bbl.anonymous} { "" }
+FUNCTION {bbl.etal} { language empty$ { "et~al" } { "等" } if$ }
+% FUNCTION {bbl.sine.loco} { language empty$ { "S.~l." } { "出版地不详" } if$ }
+% FUNCTION {bbl.sine.nomine} { language empty$ { "s.~n." } { "出版者不详" } if$ }
+
+FUNCTION {punc.period} {
+  language empty$
+  switch.chs.punc #0 =
+  or
+  { ". " }
+  { "．" }
+  if$
+}
+
+FUNCTION {punc.comma} {
+  language empty$
+  switch.chs.punc #0 =
+  or
+  { ", " }
+  { "，" }
+  if$
+}
+
+FUNCTION {punc.colon} {
+  language empty$
+  switch.chs.punc #0 =
+  or
+  { ": " }
+  { "：" }
+  if$
+}
+
+FUNCTION {punc.semicolon} {
+  language empty$
+  switch.chs.punc #0 =
+  or
+  { "; " }
+  { "；" }
+  if$
+}
+
+FUNCTION {punc.lbracket} {
+  language empty$
+  switch.chs.punc #0 =
+  or
+  { "(" }
+  { "（" }
+  if$
+}
+
+FUNCTION {punc.rbracket} {
+  language empty$
+  switch.chs.punc #0 =
+  or
+  { ")" }
+  { "）" }
+  if$
+}
+
+FUNCTION {punc.parallel} { "~//~" }
+
+%%%%%%%%%%%%%%%%
+% 功能函数
+%%%%%%%%%%%%%%%%
+% 显示开始提示信息
+FUNCTION {show.banner.begin} {
+  "-- BUPTGraduateThesis.bst version" " " * bstfile.version *
+  " (" * bstfile.date * ") " * "by Xianling Wang." *
+  top$
+  "-- " bstfile.website * top$
+  "-- See the " quote$ * "buptgraduatethesis.pdf" * quote$ *
+  " manual for usage information." * top$
+}
+
+% 显示完成提示信息
+FUNCTION {show.banner.end} {
+  "" top$ "Done." top$
+}
+
+
+% 条目宽度处理函数
+% 将引用顺序存储在每个条目的 label 中；
+% 更新最宽条目宽度
+FUNCTION {obtain.width.label} {
+  num.label int.to.str$ 'label :=
+  num.label #1 + 'num.label :=
+  label width$ maxwidth.label >
+  { label 'label.widest :=
+    label width$ 'maxwidth.label :=
+  }
+  { skip$ }
+  if$
+}
+
+% 添加块后句点
+% input：栈顶1元素
+% output：栈顶1元素
+% 为栈顶元素添加合适的句点
+FUNCTION {append.period} {
+  language empty$ switch.chs.punc #0
+}
+
+% 将页码中单独或者超过两个的"-"变为"--"
+% input：栈顶1元素
+% output：栈顶1元素
+FUNCTION {dashify} {
+  'var.string2 :=
+  ""
+  { var.string2 empty$ not }
+  { var.string2 #1 #1 substring$ "-" =
+    { "--" *
+      var.string2 #1 #2 substring$ "--" = not
+      { var.string2 #2 global.max$ substring$ 'var.string2 :=
+      }
+      {
+        { var.string2 #1 #1 substring$ "-" = }
+        { var.string2 #2 global.max$ substring$ 'var.string2 :=
+        }
+        while$
+      }
+      if$
+    }
+    { var.string2 #1 #1 substring$ *
+      var.string2 #2 global.max$ substring$ 'var.string2 :=
+    }
+    if$
+  }
+  while$
+}
+
+% 输出函数
+% input：栈顶2元素
+% output：栈顶1元素
+% 输出次栈顶元素，栈顶元素保留不变
+FUNCTION {output} {
+  swap$
+
+  % 根据当前输出位置添加前置标点
+  output.state state.mid.bibitem =
+  { punc.period *
+    write$ newline$
+  }
+  { output.state state.before.bibitem =
+    { write$ }
+    { "Undefined output.state!" top$ }
+    if$
+    state.mid.bibitem 'output.state :=
+  }
+  if$
+}
+
+% 无警告输出函数
+% input：栈顶2元素
+% output：栈顶1元素
+% 判断栈顶元素是否为空：空则舍弃栈顶元素；非空则输出次栈顶元素；
+FUNCTION {output.wo.warning} {
+  duplicate$ empty$
+  { pop$ }
+  { output }
+  if$
+}
+
+% 有警告输出函数
+% input：栈顶3元素
+% output：栈顶1元素
+% 判断次栈顶元素是否为空：空则舍弃次栈顶元素并输出栈顶提供的警告；非空则输出次次栈顶元素；
+FUNCTION {output.w.warning} {
+  'var.message :=
+  duplicate$ empty$
+  { pop$
+    var.message " is empty in " *
+    cite$ *
+    warning$
+  }
+  { output }
+  if$
+}
+
+% 无警告输出附加信息函数
+% input：栈顶3元素
+% output：栈顶1元素
+% 判断次栈顶元素是否为空：空则舍弃栈顶元素和次栈顶元素；非空则输出次次栈顶元素，并将栈顶元素附加到次栈顶元素之后；
+FUNCTION {output.w.appendix.wo.warning} {
+  'var.desinator :=
+  duplicate$ empty$
+  { pop$ }
+  { var.desinator *
+    output
+  }
+  if$
+}
+
+% 有警告输出附加信息函数
+% input：栈顶4元素
+% output：栈顶1元素
+% 判断次次栈顶元素是否为空：空则舍弃次次栈顶元素和次栈顶元素并输出栈顶提供的警告；非空则输出次次次栈顶元素，并将次栈顶元素附加到次次栈顶元素之后；
+FUNCTION {output.w.appendix.w.warning} {
+  'var.message :=
+  'var.desinator :=
+  duplicate$ empty$
+  { pop$
+    var.message " is empty in " *
+    cite$ *
+    warning$
+  }
+  { var.desinator *
+    output
+  }
+  if$
+}
+
+% 输出 item 开始
+% output：栈顶1元素
+FUNCTION {generate.bibitem.begin} {
+  newline$
+  "\bibitem{" write$
+  cite$ write$
+  "}" write$ newline$
+
+  % 在栈顶压入""，作为 output.state 为 state.before.bibitem 时的输出
+  ""
+  state.before.bibitem 'output.state :=
+}
+
+% 输出 item 结束
+% input：栈顶1元素
+FUNCTION {generate.bibitem.end} {
+  % 不借助 output 而直接输出栈顶元素
+  punc.period *
+  write$ newline$
+}
+
+% 删除用户添加的缩写符号"."
+% input：栈顶1元素
+% output：栈顶1元素
+% 将栈顶元素的字符逐一和"."比较，如果相等则舍弃
+FUNCTION {remove.period}
+{ 'var.string :=
+  % 先用""占据栈顶，防止出现所有字符都是"."的情况导致栈顶无元素
+  ""
+  { var.string empty$ not }
+  { var.string #1 #1 substring$
+    var.string #2 global.max$ substring$ 'var.string :=
+    duplicate$ "." =
+    { pop$ }
+    { * }
+    if$
+  }
+  while$
+}
+
+% 排版姓名
+% input：栈顶1元素
+% output：栈顶1元素
+% 根据 formation.name 排版姓名
+FUNCTION {format.names} {
+  % 获得所有姓名
+  'var.namelist :=
+  % 初始化正在处理的姓名序号
+  #1 'idx.names :=
+  % 获得姓名的数量并置于 num.names 中
+  var.namelist num.names$ 'num.names :=
+
+  { idx.names num.names > not }
+  { var.namelist idx.names formation.name format.name$
+    remove.period % 删除用户添加的缩写符号"."
+    'var.name :=
+
+    % 第一个姓名直接输出
+    % 后面的姓名前置逗号并输出
+    % 姓名多于特定数量就前置逗号并输出 et al
+    idx.names #1 >
+    { idx.names maxnum.authors >
+      { punc.comma *
+        bbl.etal *
+        num.names 'idx.names :=
+      }
+      { punc.comma *
+        var.name *
+      }
+      if$
+    }
+    { var.name }
+    if$
+    idx.names #1 + 'idx.names :=
+  }
+  while$
+}
+
+% 排版盲审姓名
+% input：栈顶1元素
+% output：栈顶1元素
+% 排版盲审姓名
+FUNCTION {format.names.peerreview} {
+  % 获得所有姓名
+  'var.namelist :=
+  % 防止用户输入错误导致输出空栈，需要先在栈中压入空字符串
+  ""
+  % 初始化正在处理的姓名序号
+  #1 'idx.names :=
+  % 获得姓名的数量并置于 num.names 中
+  var.namelist num.names$ 'num.names :=
+
+  { idx.names num.names > not }
+  { var.namelist idx.names "{vv{}}{ll{}}{ff{}}{jj{}}" format.name$
+    remove.period % 删除用户添加的缩写符号"."
+    'var.name :=
+
+    language empty$
+    { name.author.eng }
+    { name.author.chs }
+    if$
+
+    var.name =
+    { idx.names int.to.str$
+      "\CJKnumber{" swap$ * "}" *
+      "第" swap$ * "作者" * *
+    }
+    { "" * }
+    if$
+
+    idx.names #1 + 'idx.names :=
+  }
+  while$
+}
+
+% 排版 author 域
+% output：栈顶1元素
+% 判断 author 域是否为空：空则将""压栈；非空则将 author 排版后压栈；
+FUNCTION {format.authors} {
+  author empty$
+  { "" }
+  { switch.peerreview #1 =
+    { author format.names.peerreview }
+    { author format.names }
+    if$
+  }
+  if$
+}
+
+% 排版 editor 域
+% output：栈顶1元素
+% 判断 editor 域是否为空：空则将""压栈；非空则将 editor 排版后压栈；
+FUNCTION {format.editors} {
+  author empty$
+  { "" }
+  { editor format.names }
+  if$
+}
+
+% 排版 title 域
+% output：栈顶1元素
+% 判断 title 域是否为空：空则将""压栈；非空则将 title 排版后压栈；
+FUNCTION {format.title} {
+  title empty$
+  { "" }
+  { title }
+  if$
+}
+
+% 排版 booktitle 域
+% output：栈顶1元素
+% 判断 booktitle 域是否为空：空则将""压栈；非空则将 booktitle 排版后压栈；
+FUNCTION {format.booktitle} {
+  booktitle empty$
+  { "" }
+  { booktitle }
+  if$
+}
+
+% 排版 translator 域
+% output：栈顶1元素
+% 判断 translator 域是否为空：空则将""压栈；非空则将 translator 排版后压栈；
+FUNCTION {format.translator} {
+  translator empty$
+  { "" }
+  { translator format.names }
+  if$
+}
+
+% 从字符串中逐位提取前导数字字符串
+% 例："2nd"->"2"，"11"->"11"
+% input：栈顶1元素
+% output：栈顶1元素
+FUNCTION {extract.num.str} {
+  'var.string :=
+  "" 'var.string2 :=
+  { var.string empty$ not }
+  { var.string #1 #1 substring$
+    var.string #2 global.max$ substring$ 'var.string :=
+    duplicate$ is.num
+    { var.string2 swap$ *
+      'var.string2 :=
+    }
+    { pop$
+      "" 'var.string :=
+    }
+    if$
+  }
+  while$
+  var.string2
+}
+
+% 为数字字符串添加序数后缀
+% 例："2"->"2nd"，"11"->"11th"
+FUNCTION {num.str.to.order} {
+  'var.string :=
+  var.string text.length$ 'var.length :=
+
+  % 区分数字字符串长度是否为1
+  var.length #1 =
+  { var.string "1" =
+    { var.string "st" * }
+    { var.string "2" =
+      { var.string "nd" * }
+      { var.string "3" =
+        { var.string "rd" * }
+        { var.string "th" * }
+        if$
+      }
+      if$
+    }
+    if$
+  }
+  { var.string var.length #1 - #1 substring$ "1" =
+    { var.string "th" * }
+    { var.string var.length #1 substring$ "1" =
+      { var.string "st" * }
+      { var.string var.length #1 substring$ "2" =
+        { var.string "nd" * }
+        { var.string var.length #1 substring$ "3" =
+          { var.string "rd" * }
+          { var.string "th" * }
+          if$
+        }
+        if$
+      }
+      if$
+    }
+    if$
+  }
+  if$
+}
+
+% 排版 edition 域
+% output：栈顶1元素
+% 判断 edition 域是否为空：空则将""压栈；非空则将 edition 排版后压栈；
+FUNCTION {format.edition} {
+  edition empty$
+  { "" }
+  { edition extract.num.str
+    duplicate$ "1" = not
+    { language empty$
+      { num.str.to.order  " ed" *
+      }
+      { 'var.order :=
+        "第~" var.order *
+        "~版" *
+      }
+      if$
+    }
+    { pop$
+      ""
+    }
+    if$
+  }
+  if$
+}
+
+% 排版 booktitle, year, volume(number): pages 域
+% output：栈顶1元素
+% 将 booktitle、year、volume、number 和 pages 域整理后压栈，遇到空缺就输出相关区域空白的信息
+% 同时判断是否为分期或非连续页期刊文章并进行相应处理
+FUNCTION {format.booktitle.year.volume.number.pages} {
+  ""
+  booktitle empty$
+  { "booktitle is empty in " cite$ *
+    warning$
+    year empty$
+    { "year is empty in " cite$ *
+      warning$
+    }
+    { year * }
+    if$
+  }
+  { year empty$
+    { "year is empty in " cite$ *
+      warning$
+      booktitle *
+    }
+    { booktitle * punc.comma * year * }
+    if$
+  }
+  if$
+
+  'var.string :=
+  ""
+  var.string "" =
+  { volume empty$
+    { "volume is empty in " cite$ *
+      warning$
+    }
+    { volume * }
+    if$
+  }
+  { volume empty$
+    { "volume is empty in " cite$ *
+      warning$
+      var.string *
+    }
+    { var.string * punc.comma * volume * }
+    if$
+  }
+  if$
+
+  'var.string :=
+  ""
+  var.string "" =
+  { number empty$
+    { "number is empty in " cite$ *
+      warning$
+    }
+    { number * }
+    if$
+  }
+  { number empty$
+    { "number is empty in " cite$ *
+      warning$
+      var.string *
+    }
+    { var.string * punc.lbracket * number * punc.rbracket * }
+    if$
+  }
+  if$
+
+  'var.string :=
+  ""
+  var.string "" =
+  { pages empty$
+    { "pages is empty in " cite$ *
+      warning$
+    }
+    { pages dashify * }
+    if$
+  }
+  { pages empty$
+    { "pages is empty in " cite$ *
+      warning$
+      var.string *
+    }
+    { var.string * punc.colon * pages dashify * }
+    if$
+  }
+  if$
+
+  multiseriesmsg empty$
+  { skip$ }
+  { punc.semicolon * multiseriesmsg dashify * }
+  if$
+}
+
+% 排版 address: publisher, year{: pages} 域
+% output：栈顶1元素
+% 将 address、publisher、year 和 pages 域整理后压栈，遇到空缺就输出相关区域空白的信息
+FUNCTION {format.address.publisher.year.pages} {
+  ""
+  address empty$
+  { "address is empty in " cite$ *
+    warning$
+  }
+  { address *
+  }
+  if$
+
+  ""
+  publisher empty$
+  { "publisher is empty in " cite$ *
+    warning$
+    year empty$
+    { "year is empty in " cite$ *
+      warning$
+    }
+    { year * }
+    if$
+  }
+  { year empty$
+    { "year is empty in " cite$ *
+      warning$
+      publisher *
+    }
+    { publisher * punc.comma * year * }
+    if$
+  }
+  if$
+
+  duplicate$ "" =
+  { pop$ }
+  { 'var.string :=
+    address empty$
+    { var.string * }
+    { punc.colon * var.string *
+    }
+    if$
+  }
+  if$
+
+  'var.string :=
+  pages empty$
+  { var.string }
+  { var.string "" =
+    { pages dashify }
+    { var.string punc.colon * pages dashify * }
+    if$
+  }
+  if$
+}
+
+% 排版 address: series, date 域
+% output：栈顶1元素
+% 将 address、series 和 date 域整理后压栈，遇到空缺就输出相关区域空白的信息
+FUNCTION {format.address.series.date} {
+  ""
+  address empty$
+  { "address is empty in " cite$ *
+    warning$
+  }
+  { address *
+  }
+  if$
+
+  ""
+  series empty$
+  { "series is empty in " cite$ *
+    warning$
+    date empty$
+    { "date is empty in " cite$ *
+      warning$
+    }
+    { date dashify * }
+    if$
+  }
+  { date empty$
+    { "date is empty in " cite$ *
+      warning$
+      series *
+    }
+    { series * punc.comma * date dashify * }
+    if$
+  }
+  if$
+
+  duplicate$ "" =
+  { pop$ }
+  { 'var.string :=
+    address empty$
+    { var.string * }
+    { punc.colon * var.string *
+    }
+    if$
+  }
+  if$
+}
+
+% 排版 series 和 title 域
+% output：栈顶1元素
+FUNCTION {format.series.title} {
+  ""
+  series empty$
+  { "series is empty in " cite$ *
+    warning$
+    title empty$
+    { "title is empty in " cite$ *
+      warning$
+    }
+    { title * }
+    if$
+  }
+  { title empty$
+    { "title is empty in " cite$ *
+      warning$
+      series *
+    }
+    { series * punc.comma * title * }
+    if$
+  }
+  if$
+}
+
+% 排版 booktitle、date 和 pages 域
+% output：栈顶1元素
+% 将 address、publisher、year 和 pages 域整理后压栈，遇到空缺就输出相关区域空白的信息
+FUNCTION {format.booktitle.date.pages} {
+  ""
+  booktitle empty$
+  { "booktitle is empty in " cite$ *
+    warning$
+    date empty$
+    { "date is empty in " cite$ *
+      warning$
+    }
+    { date dashify * }
+    if$
+  }
+  { date empty$
+    { "date is empty in " cite$ *
+      warning$
+      booktitle *
+    }
+    { booktitle * punc.comma * date dashify * }
+    if$
+  }
+  if$
+
+  'var.string :=
+  pages empty$
+  { var.string }
+  { var.string "" =
+    { pages dashify }
+    { var.string punc.lbracket * pages dashify * punc.rbracket * }
+    if$
+  }
+  if$
+}
+
+% 排版 source, date 域
+% output：栈顶1元素
+FUNCTION {format.source.date} {
+  ""
+  source empty$
+  { "source is empty in " cite$ *
+    warning$
+    date empty$
+    { "date is empty in " cite$ *
+      warning$
+    }
+    { date dashify * }
+    if$
+  }
+  { date empty$
+    { "date is empty in " cite$ *
+      warning$
+      "\url{" * source * "}" *
+    }
+    { "\url{" * source * "}" * punc.comma * date dashify * }
+    if$
+  }
+  if$
+}
+
+% 为 electronic 分配类型和载体
+% output：栈顶1元素
+% 若未指定，则默认 etype 为 EB，默认 ehowpublished 为 OL
+FUNCTION {electronic.desinator} {
+  "["
+  etype empty$
+  { "EB" * }
+  { etype * }
+  if$
+  "/" *
+  ehowpublished empty$
+  { "OL" * }
+  { ehowpublished * }
+  if$
+  "]" *
+}
+
+% 排版 note 域
+% output：栈顶1元素
+% 判断 note 域是否为空：空则将""压栈；非空则将 note 压栈；
+FUNCTION {format.note} {
+  note empty$
+  { "" }
+  { note }
+  if$
+}
+
+%%%%%%%%%%%%%%%%
+% 模块函数
+%%%%%%%%%%%%%%%%
+% 输出 .bbl 文件头
+FUNCTION {generate.bibfile.begin} {
+  % 输出版本与提示信息
+  "% Generated by BUPTGraduateThesis.bst, version: " bstfile.version *
+  " (" * bstfile.date * ")" *
+  write$ newline$
+
+  % 输出前导信息
+  preamble$ empty$
+  { skip$ }
+  { preamble$ write$ newline$ }
+  if$
+
+  % 输出 thebibliography 环境的开始
+  "\begin{thebibliography}{" label.widest *
+  "}" *
+  write$ newline$
+}
+
+% 输出 .bbl 文件尾
+FUNCTION {generate.bibfile.end} {
+  newline$
+
+  % 输出 thebibliography 环境的结束
+  "\end{thebibliography}"
+  write$ newline$
+}
+
+% 初始化控制变量
+FUNCTION {initialize.controls} {
+  default.formation.name 'formation.name :=
+  default.maxnum.authors 'maxnum.authors :=
+  default.switch.chs.punc 'switch.chs.punc :=
+  default.switch.peerreview 'switch.peerreview :=
+}
+
+% 初始化位置常量
+FUNCTION {initialize.const.state} {
+  #0 'state.before.bibitem :=     % 条目起始，输出次栈顶元素
+  #1 'state.mid.bibitem :=        % 条目中间，输出次栈顶元素并附加句点
+}
+
+% 获取最宽条目标号
+FUNCTION {initialize.widest.label} {
+  #1 'num.label :=
+  #0 'maxwidth.label :=
+  "" 'label.widest :=
+}
+
+%%%%%%%%%%%%%%%%
+% 参考文献分类处理
+%%%%%%%%%%%%%%%%
+
+% 普通图书
+% [序号] 作者. 专著名[M].{ 译者, 译.}{ 版本（第一版不加标注）.} 出版地: 出版者, 年{: 参考页码}.{ note.}
+% [] author. booktitle[M].{ translator, 译}{ edition.} address: publisher, year{: pages}.{ note.}
+FUNCTION {book} {
+  generate.bibitem.begin
+
+  format.authors "author" output.w.warning
+  format.booktitle "[M]" "booktitle" output.w.appendix.w.warning
+  format.translator punc.comma "译" * output.w.appendix.wo.warning
+  format.edition output.wo.warning
+  format.address.publisher.year.pages output.wo.warning
+  format.note output.wo.warning
+
+  generate.bibitem.end
+}
+
+% 期刊
+% [序号] 作者. 论文题目[J]. 刊名, 年, 卷号(期号): 页码范围{, 非连续页或分期期刊的分期信息}.{ note.}
+% [] author. title[J]. booktitle, year, volume(number): pages{, multiseriesmsg}.{ note.}
+FUNCTION {article} {
+  generate.bibitem.begin
+
+  format.authors "author" output.w.warning
+  format.title "[J]" "title" output.w.appendix.w.warning
+  format.booktitle.year.volume.number.pages output.wo.warning
+  format.note output.wo.warning
+
+  generate.bibitem.end  
+}
+
+% 会议录
+% [序号] 编者. 论文集名[C]. 出版地: 出版者, 年{: 页码范围}.{ note.}
+% [] editor. booktitle[C]. address: publisher, year{: pages}.{ note.}
+FUNCTION {proceedings} {
+  generate.bibitem.begin
+
+  format.editors "editor" output.w.warning
+  format.booktitle "[C]" "booktitle" output.w.appendix.w.warning
+  format.address.publisher.year.pages output.wo.warning
+  format.note output.wo.warning
+
+  generate.bibitem.end
+}
+
+% 会议论文
+% [序号] 作者. 论文题目[A]. // 论文集名[C]. 出版地: 出版者, 年: 页码范围.{ note.}
+% [] author. title[A]. // booktitle[C]. address: publisher, year: pages.{ note.}
+FUNCTION {inproceedings} {
+  generate.bibitem.begin
+
+  format.authors "author" output.w.warning
+  format.title "[A]" "title" output.w.appendix.w.warning
+  booktitle empty$
+  { "booktitle is empty in " cite$ *
+    warning$
+  }
+  { punc.parallel format.booktitle * "[C]" * output.wo.warning }
+  if$
+
+  format.address.publisher.year.pages output.wo.warning
+  format.note output.wo.warning
+
+  generate.bibitem.end
+}
+
+% 学位论文
+% [序号] 作者. 论文题目[D]. 出版地: 出版者, 年{: 页码范围}.{ note.}
+% [] author. title[D]. address: publisher, year{: pages}.{ note.}
+FUNCTION {dissertation} {
+  generate.bibitem.begin
+
+  format.authors "author" output.w.warning
+  format.title "[D]" "title" output.w.appendix.w.warning
+  format.address.publisher.year.pages output.wo.warning
+  format.note output.wo.warning
+
+  generate.bibitem.end
+}
+
+% 科技报告
+% [序号] 作者. 报告题名[R]. 出版地: 出版者, 年{: 页码范围}.{ note.}
+% [] author. title[R]. address: publisher, year{: pages}.{ note.}
+FUNCTION {techreport} {
+  generate.bibitem.begin
+
+  format.authors "author" output.w.warning
+  format.title "[R]" "title" output.w.appendix.w.warning
+  format.address.publisher.year.pages output.wo.warning
+  format.note output.wo.warning
+
+  generate.bibitem.end
+}
+
+% 专利
+% [序号] 申请者. 专利题目[P]. 专利国别: 专利号, 日期.{ note.}
+% [] author. title[P]. address: series, date.{ note.}
+FUNCTION {patent} {
+  generate.bibitem.begin
+
+  format.authors "author" output.w.warning
+  format.title "[P]" "title" output.w.appendix.w.warning
+  format.address.series.date output.wo.warning
+  format.note output.wo.warning
+
+  generate.bibitem.end
+}
+
+% 技术标准
+% [序号] {责任者. }标准号, 标准题目[S].{ 出版地: 出版者, 年.}{ note.}
+% [] {author. }series, title[S].{ address: publisher, year.}{ note.}
+FUNCTION {standard} {
+  generate.bibitem.begin
+
+  format.authors output.wo.warning
+  format.series.title "[S]" output.w.appendix.wo.warning
+  format.address.publisher.year.pages output.wo.warning
+  format.note output.wo.warning
+
+  generate.bibitem.end
+}
+
+% 报纸
+% [序号] 作者. 文章题目[N]. 报纸名, 日期{(版面)}.{ note.}
+% [] author. title[N]. booktitle, date.{ note.}
+FUNCTION {newspaper} {
+  generate.bibitem.begin
+
+  format.authors "author" output.w.warning
+  format.title "[N]" "title" output.w.appendix.w.warning
+  format.booktitle.date.pages output.wo.warning
+  format.note output.wo.warning
+
+  generate.bibitem.end
+}
+
+% 电子文献
+% [序号] 作者. 文献题目[电子文献类型标识/载体类型标识]. 来源或URL{, 发表或更新日期}.{ note.}
+% 电子文献类型：数据库DB，计算机程序CP，电子公告EB
+% 载体类型：磁带MT，磁盘DK，光盘CD，网络OL
+% [] author. title[etype/ehowpublished]. source{, date}.{ note.}
+FUNCTION {electronic} {
+  generate.bibitem.begin
+
+  format.authors "author" output.w.warning
+  format.title electronic.desinator "title" output.w.appendix.w.warning
+  format.source.date output.wo.warning
+  format.note output.wo.warning
+
+  generate.bibitem.end
+}
+
+% 未分类
+% [序号] note.
+% 说明：对于bstcn中未涵盖的参考文献类型，可以手动在note中排版
+FUNCTION {unclassified} {
+  generate.bibitem.begin
+
+  format.note output.wo.warning
+
+  generate.bibitem.end
+}
+
+% 专用控制类型 BUPTGraduateThesisBSTCTL 用于提供方便的用户设置接口
+FUNCTION {BUPTGraduateThesisBSTCTL} {
+  "** BUPTGraduateThesis BST control entry" quote$ *
+  cite$ * quote$ * " detected. **" * top$
+
+  CTLformation_name empty$
+  { skip$ }
+  { CTLformation_name 'formation.name := }
+  if$
+
+  CTLmaxnum_authors empty$
+  { skip$}
+  { CTLmaxnum_authors string.to.int 'maxnum.authors := }
+  if$
+
+  CTLname_author_eng empty$
+  { skip$ }
+  { CTLname_author_eng 'name.author.eng := }
+  if$
+
+  CTLname_author_chs empty$
+  { skip$ }
+  { CTLname_author_chs 'name.author.chs := }
+  if$
+
+  CTLswitch_peerreview empty$
+  { skip$ }
+  { CTLswitch_peerreview yes.no.to.int 'switch.peerreview := }
+  if$
+
+  CTLswitch_chs_punc empty$
+  { skip$ }
+  { CTLswitch_chs_punc yes.no.to.int 'switch.chs.punc := }
+  if$
+}
+
+%%%%%%%%%%%%%%%%
+% 类型别名
+%%%%%%%%%%%%%%%%
+FUNCTION {default.type} { unclassified }
+
+%%%%%%%%%%%%%%%%
+% 主程序
+%%%%%%%%%%%%%%%%
+
+READ
+
+EXECUTE { show.banner.begin }           % 显示初始提示信息
+
+EXECUTE { initialize.controls }         % 初始化控制变量
+EXECUTE { initialize.const.state }      % 初始化状态常量
+EXECUTE { initialize.widest.label }     % 计算最宽标号
+ITERATE { obtain.width.label }          % 获取最宽条目标号，置于 label.widest 中
+
+EXECUTE { generate.bibfile.begin }      % 输出 .bbl 文件头
+ITERATE { call.type$ }                  % 逐一处理引用的条目
+EXECUTE { generate.bibfile.end }        % 输出 .bbl 文件尾
+
+EXECUTE { show.banner.end }             % 显示完成提示信息
+%VERB
+%</bst>
+% 
+% \section{example}
+% \subsection{bare_thesis.tex}
+%<*bare-thesis>
+\documentclass[%
+  degree=master,%
+  classlevel=open,%
+  mathfont=mathptmx,%
+  dedication=false,%
+  committee=true,%
+  chapbib=true,%
+  finish=print,%
+  driver=xetex]{buptgraduatethesis}
+
+%% 自定义导言区
+%% 在这里添加你需要的宏包、自定义命令、环境等
+%% \usepackage{...}
+%% \DeclareMathOperator{\CT}{H}
+%% \DeclareMathOperator{\Cov}{Cov}
+\def\BUPTThesis{\textsc{BUPT}\-\textsc{Thesis}}
+
+%% 在这里添加图片文件搜索目录
+\graphicspath{{../}}
+%% 自定义导言区结束
+
+%% 加载缩略语定义
+\input{metadata}
+
+\loadglsentries{acronyms}
+
+%% 攻读学位期间发表论文
+%% 用 \newcite{<suffix>}{<caption>} 声明不同的论文类型(例如: 期刊论文、会议论文等)。每一个类型的对应的 .bib 文件用 \bibliography<suffix> 命令加载，用 \nocite<suffix> 命令引用。具体请参考 pubs.tex 中的示例
+\newcite{jrnl}{期刊论文}
+\newcite{conf}{会议论文}
+\newcite{patent}{专利}
+
+\begin{document}
+%% 声明前置部分
+\makefrontmatter
+
+%% 生成主要符号对照表
+\input{notations}
+
+%% 主体部分
+\mainmatter
+%% 用\include{}命令引用各章.tex文件
+\include{ch_intro}
+\include{ch_concln}
+
+\ifx\usechapbib\undefined
+\bibliographystyle{buptgraduatethesis}
+\bibliography{bare_thesis}
+\fi
+
+%% 附录部分
+
+%% 如果有两个或两个以上的附录, 使用appendix环境
+\begin{appendix}
+  \input{app_lhospital}
+  % 自动抽取生成缩略语表作为附录A
+  \tableofacronyms
+  % 用\input{}添加其他的附录
+  % \input{...}
+\end{appendix}
+
+%% 如果只有一个附录, 使用appendix*环境
+%% \begin{appendix*}
+%%   % 自动抽取生成缩略语表作为附录A
+%%   % \tableofacronyms
+%% \end{appendix*}
+
+\backmatter
+%% 致谢
+\ifx\ispeerreview\undefined
+\input{ackgmt}
+\fi
+
+%% 在读期间论文发表情况
+\input{pubs}
+
+\newpage
+\end{document}
+%</bare-thesis>
+% 
+% \subsection{ch_intro.tex}
+%<*ch-intro>
+\chapter{绪论}
+北京邮电大学 \gls*{BUPT} 研究生院培养与学位办公室于 2014 年 11 月颁布了最新的《北京邮电大学关于研究生学位论文格式的统一要求》（下简称“要求”）\cite{BUPT_Thesis_Format_2014}，对原有研究生学位论文的格式要求做出了新的修订。
+但是迄今为止，研究生院尚未发布统一的论文模板。
+对于已经、正在或者即将撰写学位论文的同学都只能按照该要求的规定自行调整其学位论文的格式，一方面给大家增加了繁重的排版工作，另一方面也不利于统一全校的论文格式。
+
+2007 年 9 月，北京邮电大学无线新技术研究所 \gls*{WTI} 的王旭博士制作并发布了 latex-bupt——北京邮电大学博士毕业论文 \LaTeX 模板（非官方版）\cite{latex-bupt}。
+该模板可以满足旧版官方论文格式要求\cite{BUPT_Thesis_Format_2004}，但是在一些细节上的处理还有待改进，例如：
+\begin{itemize}
+\item 参考文献不能分列在各章末尾；
+\item 不能利用 BiBTeX 处理发表学术论文列表；
+\item 参考文献的格式上赏不能完全满足学校要求等。
+\end{itemize}
+
+2009 年，张煜博士发布了 buptthesis——北京邮电大学研究生学位论文 \LaTeX 文档类（非官方版）\cite{buptthesis}。
+该模板解决了 latex-bupt 中存在的问题，并且同样可以满足旧版官方论文格式要求\cite{BUPT_Thesis_Format_2004}，但是仍然存在以下一些问题可以改进：
+\begin{itemize}
+\item 论文格式与最新版的官方论文格式要求\cite{BUPT_Thesis_Format_2014}有细微出入；
+\item 中文解决方案采用旧式 CJK 宏包，需要用户自行生成字体；
+\item 缺乏详细的用户使用文档，用户撰写论文过程中遇到的问题基本都需要登陆北邮人论坛发问，由张博逐一解答。
+\end{itemize}
+
+本模板在 buptthesis\cite{buptthesis} 的基础上，增加了 XeTeX 编译引擎，使用 xeCJK 宏包作为中文解决方案。
+同时，本模板还根据北京邮电大学发布的最新的论文格式要求\onlinecite{BUPT_Thesis_Format_2014}进行模板格式的修改。
+本模板还提供了较为细致的用户使用文档，可以帮助初级用户快速上手使用本模板。
+
+\section{中文信息处理软件的国内外发展现状}
+中文信息处理软件可以分为字处理软件和排版软件两大类。
+字处理软件包括以下功能：字体、字号设定，英文断字，拼写和语法检查等。
+通常字处理软件处理文档的规模比较小，一般是作为办公自动化套件的一个重要组成部分，目前广泛使用的中文字处理软件主要包括微软 Office 套件中的 Word、金山公司的 WPS，以及开源社区的 OpenOffice 等。
+排版软件则是针对大规模专业出版印刷而设计的一类软件，其主要功能是文字图像定位，基本图形绘制等。
+排版软件相对于字处理软件其专业针对性更强，目前广泛使用的中文排版软件主要包括北大方正的书版系列软件，飞腾系列软件，蒙泰桌面出版系统，Adobe 公司的 PageMaker，FrameMaker，以及 QuarkPress 公司的 PassPort 等。
+除此而外，由 D.~E.~Knuth 编写的 \TeX 和由 L.~Lamport 编写的 \LaTeX 也是学术界广泛的应用排版软件。
+
+微软公司的 Word 是目前国内最为普及的字处理软件之一，也是大多数学校规定的学位论文编辑排版工具。
+不容否认，Word 在简单文书（例如：通知、简报等）编辑排版方面具有方便快捷的优势，而且其对多人协同编辑的支持也给文字修订工作带来了极佳的用户体验。
+但是从实际使用的情况看，尽管 Word 已经经历了第 12 个版本的改进，但是其对于处理大型文书文稿（例如：书籍、学位论文等）的能力仍然有待进一步完善和提高。
+由于 Word 版本不兼容造成的来回反复，也是使用 Word 编辑文字稿件的烦事之一。
+另外，由于 Word 对数学公式编辑的支持一直延续其“对象链接与嵌入”（Object Linking and Embedding，OLE）的设计理念，这也使得每位使用 Word 排版过理工类的文字资料的人都有一段或多段刻骨铭心的痛苦经历，往往花在调整格式这种 dirty work 上的时间和花在编写文章内容上的时间差不多或着甚至更多。
+
+北大方正的书版系列软件是专业中文出版领域的权威，国内几乎所有的大型出版社、报社、政府机关几乎都使用书版系列软件对其出版的书籍、报纸和公文进行编辑排版。
+但是，书版软件作为方正电子出版流程中的一个主要组成部分，主要定位于印前排版环节，面向专业排版工作人员。
+因此，学习和使用使用书版软件需要花费较长的时间来熟悉复杂的排版命令，发排后需要使用专用的 RIP 软件或者方正的专用打印机才能输出样张等。
+
+美国 Stanford 大学的荣誉退休教授 D.~E.~Knuth 在 197x 年独自一人开发了 \TeX 排版系统，随后，L.~Lamport 为 \TeX 编写了一系列的宏包使得 \TeX 的使用更加方便，这些宏包被称为 \LaTeX。
+自从 \TeX/\LaTeX 问世以来它们就受到了学术界的青睐，目前几乎所有的国外出版社都接受或指定使用 \TeX/\LaTeX 对稿件进行排版编辑。
+19xx 年，中国科学院的张林波研究员开发了 CCT 使得 \LaTeX 可以用于中文文稿的处理。
+德国的 W.~Lemberg，编写了 CJK 宏包为 \LaTeX 提供了中日韩三国语言的解决方案。
+使用 \TeX/\LaTeX 排版学术论文的最大优势在于，它让作者可以不用为排版输出的具体格式操心，而全心投入文章、书稿内容的编写上，最大程度的降低作者从事排版 dirty work 的工作量。
+
+目前，我国的清华大学、哈尔滨工业大学、西安电子科技大学、西安交通大学等都已经纷纷制作了本校学位论文的 \LaTeX 模板，并接受使用 \LaTeX 排版的学位论文。
+
+\section{本说明的主要内容}
+本说明全面介绍了如何使用 BUPTGraduateThesis 来排版符合\onlinecite{BUPT_Thesis_Format_2014}规定的北京邮电大学学位论文。
+全文内容安排如下：
+
+\begin{enumerate}
+\item 第二章介绍……
+\item ……
+\end{enumerate}
+
+%% 本章参考文献
+\ifx\usechapbib\empty
+\nocite{BSTcontrol}
+\setcounter{NAT@ctr}{0}
+\bibliographystyle{buptgraduatethesis}
+\bibliography{bare_thesis}
+\fi
+%</ch-intro>
+% 
+% \subsection{ch_concln.tex}
+%<*ch-concln>
+\chapter{功能测试}
+脚注使用带圈数字的表示方法，此处为示例 1\footnote{测试脚注一} 和示例 2\footnote{测试脚注二}。
+
+缩略语的功能非常强大，例如首次出现 \gls*{WTT} 和非首次出现 \gls*{WTT} 时将显示不同的内容。
+
+参考文献可以使用\cite{BUPT_Thesis_Format_2014}和\onlinecite{BUPT_Thesis_Format_2004}的表示方法。
+
+\section{三国演义}
+《三国演义》\cite{SANGUOYANYI}是中国第一部长篇章回体历史演义的小说，以描写战争为主，反映了蜀（汉）、魏、吴三个政治集团之间的政治和军事斗争，大致分为黄巾之乱、董卓之乱、群雄逐鹿、三国鼎立、三国归晋五大部分。
+
+在广阔的背景下，上演了一幕幕波澜起伏、气势磅礴的战争场面，成功刻画了近五百个人物形象，其中曹操、刘备、孙权、诸葛亮、周瑜、关羽、张飞等人物形象脍炙人口，其中诸葛亮是作者心目中的“贤相”的化身，他具有“鞠躬尽瘁，死而后已”的高风亮节，具有近世济民再造太平盛世的雄心壮志，而且作者还赋予他呼风唤雨、神机妙算的奇异本领。
+曹操是一位奸雄，他生活的信条是“宁教我负天下人，休教天下人负我”，既有雄才大略，又残暴奸诈，是一个政治野心家阴谋家这与历史上的真曹操是不可混同的。
+关羽“威猛刚毅”、“义重如山”。
+但他的义气是以个人恩怨为前提的，并非国家民族之大义。
+刘备被作者塑造成为仁民爱物、视贤下士、知人善任的仁君典型。
+
+\subsection{长坂坡}
+京剧《长坂坡》\cite{CHANGBANPO}是依据《三国演义》改编的京剧传统剧目。
+
+故事叙述：刘备自烧屯新野之后，弃樊城，阻襄阳，一路率引军民，流离败走，穷促万分。
+关羽、诸葛亮，已先后遣往夏口，乞救于刘琦未返，刘备等往投江陵暂驻，中途经过当阳，驻扎景山之下。
+忽然曹操大兵，漫山遍野追至，夤夜厮杀，刘备众大败，及天明检点随从只余百余骑，刘备家眷及赵云、简雍、二糜等将，均不知下落，其余百姓，亦均散失殆尽。
+此时赵云因于阿斗及甘、糜二夫人等失散，遂单骑冲突，四处找寻主眷，沓无下落。
+往回三数次，遇见简雍被创卧地，始略知失踪处所。
+赵云先救出简雍，令回，再往军中及百姓中搜访，先救甘夫人于难民队，同时又救糜竺，亲自护送至长坂坡，令糜竺保甘嫂先行，折身再回，觅糜嫂及阿斗。
+途中刺落夏侯恩，收获青釭宝剑，七次冲入重围，方得百姓指引，得见糜夫人抱阿斗坐于坍墙枯井之旁啼哭。
+夫人身受数创，不能行走。
+赵云叩见，极力请夫人上马，欲保护而出。
+夫人深知大义，惟以阿斗为托，己则以愿死报主，免累赵云，赵云再三安慰催行，力任无妨，夫人再三不可，亦促赵云速行。
+继见赵云坚待不去，恐且迟延遇寇，乃跳身入井，以速赵云之行。
+赵云大惊，尚踌躇设法营救，则曹军人马已至，不得已推墙掩井，解甲藏阿斗于胸前，忽忽上马，厮杀夺围欲出。
+此时曹操大兵云集，群矢于赵云一身，赵云在核心，东斩西杀，虽不败辱，而屡濒于厄。
+幸曹操爱勇将，赖徐庶乘间说曹操，以生擒勿伤，传令全军，始得完肤而返。
+
+测试所有参考文献类型\cite{CITATION_BOOK,CITATION_ARTICLE,CITATION_PROCEEDINGS,CITATION_INPROCEEDINGS,CITATION_TECHREPORT,CITATION_STANDARD,CITATION_PATENT,CITATION_NEWSPAPER,CITATION_ELECTRONIC}。
+
+%% 本章参考文献
+\ifx\usechapbib\empty
+\nocite{BSTcontrol}
+\setcounter{NAT@ctr}{0}
+\bibliographystyle{buptgraduatethesis}
+\bibliography{bare_thesis}
+\fi
+%</ch-concln>
+% 
+% \subsection{metadata.tex}
+%<*metadata>
+
+%% 学号
+\studentid{2011000000}             
+
+%% 论文题目
+\ctitle{北京邮电大学研究生学位论文\LaTeXe{}模板使用示例文档}
+\etitle{Example of BUPT Graduate Thesis \LaTeXe{} Template With longlonglong Title}
+
+%% 申请学位
+\cdegree{工学硕士}
+
+%% 院系名称
+\cdepartment{信息与通信工程学院}
+\edepartment{School of Information and Communication Engineering}
+
+%% 专业名称
+\cmajor{移动通信}
+\emajor{Mobile Communication}
+
+%% 你的姓名
+\cauthor{学生姓名}
+\eauthor{Pinyin Name}
+
+%% 博士后研究工作报告-分类号
+\classnumber{O441.3}
+
+%% 博士后研究工作报告-UDC
+\udc{621.396.9}
+
+%% 博士后研究工作报告-学校编号
+\schoolserial{147227}
+
+%% 博士后研究工作起始时间
+\startdate{2014年10月29日}
+
+%% 博士后研究工作期满时间
+\finishdate{2016年4月2日}
+
+%% 培养方式：填写内容应为“全日制”或“非全日制”。
+\ctrainingmode{全日制 或 非全日制}
+\etrainingmode{Part-Time or Full-Time}
+
+%% 你导师的姓名
+\csupervisor{导师姓名}
+\esupervisor{Supervisor Name}
+
+
+%% 中文摘要
+\cabstract{%
+  中、英文摘要位于声明的次页，摘要应简明表达学位论文的内容要点，体现研究工作的核心思想。
+  重点说明本项科研的目的和意义、研究方法、研究成果、结论，注意突出具有创新性的成果和新见解的部分。
+
+  关键词是为文献标引工作而从论文中选取出来的、用以表示全文主题内容信息的术语。
+  关键词排列在摘要内容的左下方，具体关键词之间以均匀间隔分开排列，无需其它符号。
+}
+
+%% 中文关键词，关键词之间用 \kwsep 分割
+\ckeywords{\TeX \kwsep \LaTeX \kwsep xeCJK \kwsep 模板 \kwsep 排版 \kwsep 论文}
+
+%% 英文摘要
+\eabstract{%
+  The Chinese and English abstract should appear after the declaration page.
+  The abstract should present the core of the research work, especially the purpose and importance of the research, the method adopted, the results, and the conclusion.
+
+  Key words are terms selected for documentation indexing, which should present the main contributions of the thesis.
+  Key words are aligned at the bottom left side of the abstract content.
+  Key words should be seperated by spaces but not any other symbols.
+}
+
+%% 英文关键词，也用 \kwsep 分割
+\ekeywords{%
+  \TeX \kwsep \LaTeX \kwsep xeCJK \kwsep template \kwsep typesetting \kwsep thesis}
+%</metadata>
+% 
+% \subsection{pubs.tex}
+%<*pubs>
+%% 发表论文列表
+
+%% 攻读学位期间发表论文列表用 tableofpublications 环境产生。需要
+%% 在 bare_thesis.tex 的导言区用 \newcite{<name>}{<caption>} 声明不同类
+%% 型的论文，具体见导言区说明。
+%% 根据各类论文发表数量设置\setbiblabelwidth{<num>}，用于控制发表论文序号的对齐位置。
+%% 例如：发表conf类论文数量为个位数，则<num>=1；发表jrnl类论文数量为两位数，则<num>=10；
+\begin{tableofpublications}
+  \thispagestyle{bupt@pubheadings}%
+  \setcounter{NAT@ctr}{0}
+  \setbiblabelwidth{1}
+  \bibliographyjrnl{pubs}
+  \nocitejrnl{paper1}
+
+  \setbiblabelwidth{1}
+  \bibliographyconf{pubs}
+  \nociteconf{paper2}
+
+  \setbiblabelwidth{1}
+  \bibliographypatent{pubs}
+  \nocitepatent{patent1}
+\end{tableofpublications}
+%</pubs>
+% 
+% \subsection{pubs.bib}
+%<*pubs-bib>
+%% 这是为评审版本自动产生作者位次专用的 BibTeX 条目
+%% 不要更改条目名称 BSTpeerreview
+@BUPTGraduateThesisBSTCTL{BSTpeerreview,
+  CTLname_author_eng = "{\textbf{Zhang~San}}",
+  CTLname_author_chs = "{\textbf{张三}}",
+  CTLswitch_chs_punc = "no",
+  CTLswitch_peerreview = "yes"
+}
+
+%% 如果学位论文作者在发表论文列表中的作者排名有超过 3 的, 其姓名将不会出现在论文列表中
+%% 设置下面的数值可以改变发表论文列表中作者姓名显示的最大数目
+@BUPTGraduateThesisBSTCTL{BSTcontrol,
+  CTLmaxnum_authors = "3"
+}
+
+@ARTICLE{paper1,
+  author = "{\textbf{Zhang~San}} and Newton, Issac and Hawking, Stephen William and Galilei, Galileo",
+  title = "An extended brief history of time",
+  booktitle = "Journal of Galaxy",
+  year = "2079",
+  volume = "1234",
+  number = "4",
+  pages = "567--890",
+  note = "（SCI 收录，检索号：786FZ）"
+}
+
+@INPROCEEDINGS{paper2,
+  author = "McClane, John and McClane, Lucy and Gennero, Holly and {\textbf{Zhang~San}}",
+  title = "Transcript in Die hard",
+  booktitle = "Proc. HDDD 100th Super Technology Conference (STC 2046)",
+  year = "2046",
+  pages = "123--456",
+  address = "Eta Cygni, Cygnus",
+  note = "（EI 源刊）"
+}
+
+@PATENT{patent1,
+  author = "{\textbf{张三}} and 李四",
+  title = "一种进行时空旅行的装置",
+  address = "中国",
+  series = "1234567",
+  date = "2046-01-09"
+}
+%</pubs-bib>
+% 
+% \subsection{bare_thesis.bib}
+%<*bare-thesis-bib>
+@BUPTGraduateThesisBSTCTL{BSTcontrol,
+  CTLmaxnum_authors = "3",
+  CTLswitch_chs_punc = "no"
+}
+
+@BOOK{CITATION_BOOK,
+  author = "Lippman, Stanley B. and Lajoie, Jos{\'e}e",
+  booktitle = "C++ Primer中文版",
+  translator = "王刚 and 杨巨烽",
+  edition = "5",
+  address = "中国",
+  publisher = "电子工业出版社",
+  year = "2013",
+  pages = "1-838",
+  language = "chs",
+  note = ""
+}
+
+@ARTICLE{CITATION_ARTICLE,
+  author = "Erik Dahlman and Bj{\"o}rn Gudmundson and Mats Nilsson and Johan Sk{\"o}ld",
+  title = "UMTS/IMT-2000 Based on Wideband CDMA",
+  booktitle = "IEEE Communications Magazine",
+  year = "1998",
+  volume = "36",
+  number = "9",
+  pages = "70-80",
+  multiseriesmsg = "year, volume, number and pages information for paper published in multi-series journals",
+  note = ""
+}
+
+@PROCEEDINGS{CITATION_PROCEEDINGS,
+  editor = "",
+  booktitle = "Proceedings of IEEE Global Communications Conference (GLOBECOM'2008)",
+  address = "New Orlean, USA",
+  publisher = "IEEE",
+  year = "2008",
+  pages = "",
+  note = ""
+}
+
+@INPROCEEDINGS{CITATION_INPROCEEDINGS,
+  author = "Jindal, Nihar and Andrews, Jeffrey G. and Weber, Steven",
+  title = "Rethinking MIMO for Wireless Networks: Linear Throughput Increases with Multiple Receive Antennas",
+  booktitle = "Proceedings of IEEE International Conference on Communications (ICC'2009)",
+  address = "Dresden, Germany",
+  publisher = "IEEE",
+  year = "2009",
+  pages = "1-6",
+  note = ""
+}
+
+@DISSERTATION{CITATION_DISSERTATION,
+  author = "Mitola, Joseph",
+  title = "Cognitive Radio: An Integrated Agent Architecture for Software Defined Radio",
+  address = "Stockholm, Sweden",
+  publisher = "Royal Institute of Technology",
+  year = "2000",
+  pages = "",
+  note = ""
+}
+
+@TECHREPORT{CITATION_TECHREPORT,
+  author = "Prasad, N. and Khojastepour, M. A. and Jiang, M. and Wang, X. and Rangarajan, S.",
+  title = "MU-MIMO: Demodulation at the Mobile Station",
+  address = "",
+  publisher = "IEEE 802.16 Broadband Wireless Access Working Group",
+  year = "2009",
+  pages = "1-11",
+  note = ""
+}
+
+@PATENT{CITATION_PATENT,
+  author = "Paulraj, Arogyaswami J. and Heath, Jr, Robert W. and Sebastian, Peroor K. and Gesbert, David J.",
+  title = "Spatial Multiplexing in a Cellular Network",
+  address = "USA",
+  series = "6067290",
+  date = "2000-5-23",
+  note = ""
+}
+
+@STANDARD{CITATION_STANDARD,
+  author = "",
+  series = "TS 36.211 V10.5.0",
+  title = "Physical Channels and Modulation",
+  address = "Valbonne, France",
+  publisher = "3GPP",
+  year = "2012-6",
+  note = ""
+}
+
+@NEWSPAPER{CITATION_NEWSPAPER,
+  author = "吴刚",
+  title = "立陶宛进入欧元时代",
+  booktitle = "人民日报",
+  date = "2015-1-2",
+  language = "chs",
+  note = ""
+}
+
+@ELECTRONIC{CITATION_ELECTRONIC,
+  author = "{百度百科}",
+  title = "香农公式",
+  etype = "EB",
+  ehowpublished = "OL",
+  source = "http://baike.baidu.com/view/747964.htm",
+  date = "2013-10-28",
+  language = "chs",
+  note = ""
+}
+
+@ELECTRONIC{CHANGBANPO,
+  author = "赵云 and 曹操 and 刘备 and 甘夫人 and 糜夫人",
+  title = "长坂坡",
+  etype = "EB",
+  ehowpublished = "OL",
+  source = "http://baike.baidu.com/subview/428389/5476054.htm",
+  language = "chs"
+}
+
+@BOOK{SANGUOYANYI,
+  author = "罗贯中",
+  title = "三国演义",
+  edition = "1",
+  address = "山西太原",
+  year = "元末明初",
+  language = "chs"
+}
+
+@ELECTRONIC{BUPT_Thesis_Format_2014,
+  title = "关于研究生学位论文格式的统一要求",
+  author = "北京邮电大学研究生院培养与学位办公室",
+  etype = "EB",
+  ehowpublished = "OL",
+  date = "2014-11",
+  source = "http://www.bupt.edu.cn/",
+  language = "chs"
+}
+
+@ELECTRONIC{BUPT_Thesis_Format_2004,
+  title = "关于研究生学位论文格式的统一要求",
+  author = "北京邮电大学研究生院培养与学位办公室",
+  year = "2004",
+  etype = "EB",
+  ehowpublished = "OL",
+  date = "2004",
+  source = "http://www.bupt.edu.cn/",
+  language = "chs"
+}
+
+@ELECTRONIC{latex-bupt,
+  author = "王旭",
+  title = "latex-bupt: \LaTeX style for {BUPT} thesis",
+  year = "2007",
+  etype = "EB",
+  ehowpublished = "OL",
+  date = "2009-01-14",
+  source = "http://code.google.com/p/latex-bupt/",
+  language = "chs"
+}
+
+@ELECTRONIC{buptthesis,
+  author = "张煜",
+  title = "北京邮电大学研究生学位论文 \LaTeX{} 文档类",
+  year = "2009",
+  dhowpublished = "online",
+  refdate = "2013-07-06",
+  source = "http://code.google.com/p/buptthesis/",
+  language = "chs"
+}
+
+%</bare-thesis-bib>
+% 
+% \subsection{ackgmt.tex}
+%<*ackgmt>
+\begin{acknowledgement}
+  %% 感谢所有你应该感谢的人
+  感谢Donald Ervin Knuth.
+\end{acknowledgement}
+%</ackgmt>
+% 
+% \subsection{acronyms.tex}
+%<*acronyms>
+%% 定义缩略语词条的命令为
+%% \newacronym{<entry>}{<abrv>}{<full_en>}{<full_zh>}
+%% 其中各项的意义如下
+%% <entry>    缩略语词条的名称
+%% <abrv>     缩略语
+%% <full_en>  英文全称
+%% <full_zh>  中文名称
+%% 在文中用\gls*{<entry>}等命令引用缩略语，具体用法参见用户手册
+
+\newacronym{DFT}{DFT}
+{Discrete Fourier Transform}{离散 Fourier 变换}
+
+\newacronym{BUPT}
+{BUPT}{Beijing University of Posts and Telecommunications}{北京邮电大学}
+
+\newacronym{3GPP}{3GPP}
+{The 3rd Generation Partner Project}{第三代合作计划}
+
+\newacronym{ITU}{ITU}
+{International Telecommunication Union}{国际电信联盟}
+
+\newacronym{WTT}{WT\&T}
+{Wireless Theories and Technologies Lab}{无线理论与技术实验室}
+
+\newacronym{WTI}{WTI}
+{Wireless Technology Innovation Institute}{无线新技术研究所}
+%</acronyms>
+% 
+% \subsection{notations.tex}
+%<*notations>
+\begin{listofnotations}
+\item [$(\cdot)^*$] 复共轭
+\item [$(\cdot)^{\mathrm T}$] 矩阵转置
+\item [$(\cdot)^{\mathrm H}$] 矩阵共轭转置
+\item [$\mathbf{X}$] 矩阵或向量
+\item [$\mathcal{A}$] 集合
+\item [$\mathcal{A}\times\mathcal{B}$] 
+  集合 $\mathcal{A}$ 与集合 $\mathcal{B}$ 的 Cartesian 积，即 $\mathcal{A}\times\mathcal{B}=\{(a,b):a\in\mathcal{A},b\in\mathcal{B}\}$
+\end{listofnotations}
+%</notations>
+% 
+% \subsection{committee.tex}
+%<*committee>
+\begin{table*}[h]
+  \centering
+  \caption*{}
+  \label{tab:committee}
+  \renewcommand\arraystretch{1.5}
+  \begin{tabular}{|>{\centering\arraybackslash}m{2cm} | >{\centering\arraybackslash}m{2cm} | >{\centering\arraybackslash}m{2cm} | >{\centering\arraybackslash}m{6cm}|}
+    \hline
+    职务     & 姓 \hspace{1em} 名               & 职 \hspace{1em} 称 & 工\hspace{1em} 作\hspace{1em} 单\hspace{1em} 位 \\
+    \hline
+    主席     &                                &       &             \\
+    \hline
+    委员     &                                &       &             \\
+    \hline
+    委员     &                                &       &             \\
+    \hline
+    委员     &                                &       &             \\
+    \hline
+    委员     &                                &       &             \\
+    \hline
+    秘书     &                                &       &             \\
+    \hline
+    答辩日期 & \multicolumn{3}{|c|}{2023.05.13}                       \\
+    \hline
+  \end{tabular}
+\end{table*}
+%</committee>
+% 
+% \subsection{app_lhospital.tex}
+%<*app-lhospital>
+\chapter{不定型（$0/0$）极限的计算}
+\begin{theorem}[L'Hospital法则]
+  若
+  \begin{enumerate}
+  \item 当 $x \to a$ 时，函数 $f(x)$ 和 $g(x)$ 都趋于零；
+  \item 在点 $a$ 某去心邻域内，$f'(x)$ 和 $g'(x)$ 都存在，且 $g'(x)\neq 0$；
+  \item $\displaystyle\lim_{x \to a} \dfrac{f'(x)}{g'(x)}$ 存在（或为无穷大），
+  \end{enumerate}
+  那么
+  \begin{align}
+    \label{eq:app:lhospital}
+    \lim_{x \to a} \frac{f(x)}{g(x)} = \lim_{x \to a} \frac{f'(x)}{g'(x)}.
+  \end{align}
+\end{theorem}
+\begin{proof}
+  以下只证明两函数 $f(x)$ 和 $g(x)$ 在 $x = a$ 为光滑函数的情形。
+  由于 $f(a) = g(a) = 0$，原极限可以重写为
+  \begin{align*}
+    \lim_{x \to a} \frac{f(x) - f(a)}{g(x) - g(a)}.
+  \end{align*}
+  对分子分母同时除以 $(x - a)$，得到
+  \begin{align*}
+    \lim_{x \to a} \frac{%
+      \dfrac{f(x) - f(a)}{x - a}
+    }{%
+      \dfrac{g(x) - g(a)}{x - a}
+    } &
+    = \frac{%
+      \displaystyle\lim_{x \to a} \frac{f(x) - f(a)}{x - a}
+    }{%
+      \displaystyle\lim_{x \to a} \frac{g(x) - g(a)}{x - a}
+    }.
+  \end{align*}
+  分子分母各得一差商极限，即函数 $f(x)$ 和 $g(x)$ 分别在 $x = a$ 处的导数
+  \begin{align*}
+    \lim_{x \to a} \frac{f(x)}{g(x)} &
+    = \frac{f'(a)}{g'(a)}.
+  \end{align*}
+  由光滑函数的导函数必为一光滑函数，故 \eqref{eq:app:lhospital} 得证。
+\end{proof}
+%</app-lhospital>
+% 
+% \end{implementation}
+% 
+% \Finale
+%
+\endinput
